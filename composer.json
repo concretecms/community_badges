@@ -1,0 +1,13 @@
+{
+  "name": "community_awards",
+  "description": "Integrate the community awards feature awards into your site.",
+  "type": "concrete5-package",
+  "license": "MIT",
+  "prefer-stable": true,
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "PortlandLabs\\CommunityAwards\\": "src/PortlandLabs/CommunityAwards"
+    }
+  }
+}

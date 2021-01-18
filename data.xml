@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<concrete5-cif version="1.0">
+    <blocktypes>
+        <blocktype handle="community_awards" package="community_awards"/>
+    </blocktypes>
+
+    <singlepages>
+        <page name="Awards" path="/dashboard/users/awards" filename="/dashboard/users/awards.php" pagetype=""
+              description=""
+              package="community_awards"/>
+
+        <page name="Grant" path="/dashboard/users/awards/grant" filename="/dashboard/users/awards/grant.php"
+              pagetype=""
+              description=""
+              package="community_awards"/>
+
+        <page name="Give" path="/dashboard/users/awards/give" filename="/dashboard/users/awards/give.php"
+              pagetype=""
+              description=""
+              package="community_awards"/>
+
+    </singlepages>
+</concrete5-cif>

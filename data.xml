@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<concrete5-cif version="1.0">
+    <blocktypes>
+        <blocktype handle="community_badges" package="community_badges"/>
+    </blocktypes>
+
+    <singlepages>
+        <page name="Badges" path="/dashboard/users/badges" filename="/dashboard/users/badges.php" pagetype=""
+              description=""
+              package="community_badges"/>
+
+        <page name="Grant Award" path="/dashboard/users/badges/grant" filename="/dashboard/users/badges/grant.php"
+              pagetype=""
+              description=""
+              package="community_badges"/>
+
+        <page name="Give" path="/dashboard/users/badges/give" filename="/dashboard/users/badges/give.php"
+              pagetype=""
+              description=""
+              package="community_badges"/>
+
+    </singlepages>
+</concrete5-cif>

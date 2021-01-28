@@ -1,0 +1,1 @@
+- Group badges (when they are multiple badges of the same type available)

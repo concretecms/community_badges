@@ -19,5 +19,15 @@
               description=""
               package="community_badges"/>
 
+        <page name="Community Badges" path="/dashboard/system/community_badges" filename="/dashboard/system/community_badges.php"
+              pagetype=""
+              description=""
+              package="community_badges"/>
+
+        <page name="Automation" path="/dashboard/system/community_badges/automation" filename="/dashboard/system/community_badges/automation.php"
+              pagetype=""
+              description=""
+              package="community_badges"/>
+
     </singlepages>
 </concrete5-cif>

@@ -14,6 +14,8 @@ use Concrete\Core\Foundation\Service\Provider;
 use Concrete\Core\Routing\Router;
 use PortlandLabs\CommunityBadges\API\V1\CommunityBadges;
 use PortlandLabs\CommunityBadges\API\V1\Middleware\FractalNegotiatorMiddleware;
+use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ServiceProvider extends Provider
 {
@@ -23,17 +25,31 @@ class ServiceProvider extends Provider
 
     public function __construct(
         Application $app,
+        EventDispatcherInterface $eventDispatcher,
         Router $router
     )
     {
         parent::__construct($app);
 
+        $this->eventDispatcher = $eventDispatcher;
         $this->router = $router;
     }
 
     public function register()
     {
         $this->registerAPI();
+        $this->registerAutomationManager();
+    }
+
+    protected function registerAutomationManager()
+    {
+        $this->app->singleton(Manager::class);
+        /** @var Manager $driverManager */
+        $driverManager = $this->app->make(Manager::class);
+
+        $this->eventDispatcher->addListener("on_start", function () use ($driverManager) {
+            $driverManager->register();
+        });
     }
 
     protected function registerAPI()

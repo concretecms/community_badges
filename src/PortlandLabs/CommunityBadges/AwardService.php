@@ -533,7 +533,7 @@ class AwardService
 
         if ($user->isRegistered()) {
             return $this->grantAwardRepository->findBy([
-                "user" => $user,
+                "user" => $user->getUserInfoObject()->getEntityObject(),
                 "redeemedAt" => null
             ]);
         } else {
@@ -599,5 +599,74 @@ class AwardService
         }
 
         return $userBadges;
+    }
+
+    /**
+     * @param User|null $user
+     * @return UserBadge[]
+     */
+    public function getAllAwardsGroupedByUser(
+        ?User $user = null
+    ): iterable
+    {
+        $userBadges = [];
+
+        foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
+            if ($userBadge->getBadge() instanceof Award) {
+                $badgeAdded = false;
+
+                foreach ($userBadges as $index => $addedBadge) {
+                    if ($addedBadge["userBadge"]->getBadge()->getId() === $userBadge->getBadge()->getId()) {
+                        $userBadges[$index]["count"]++;
+                        $badgeAdded = true;
+                        break;
+                    }
+                }
+
+                if (!$badgeAdded) {
+                    $userBadges[] = [
+                        "userBadge" => $userBadge,
+                        "count" => 1
+                    ];
+                }
+            }
+        }
+
+        return $userBadges;
+    }
+    /**
+     * @param User|null $user
+     * @return AwardGrant[]
+     */
+    public function getAllGrantedAwardsGroupedByUser(
+        ?User $user = null
+    ): iterable
+    {
+        $userGrantAwards = [];
+
+        foreach ($this->getAllGrantedAwardsByUser($user) as $grantedAward) {
+            /** @var AwardGrant $grantedAward */
+
+            if ($grantedAward->getAward() instanceof Award) {
+                $grantAwardAdded = false;
+
+                foreach ($userGrantAwards as $index => $addedGrantAward) {
+                    if ($addedGrantAward["grantedAward"]->getAward()->getId() === $grantedAward->getAward()->getId()) {
+                        $userGrantAwards[$index]["count"]++;
+                        $grantAwardAdded = true;
+                        break;
+                    }
+                }
+
+                if (!$grantAwardAdded) {
+                    $userGrantAwards[] = [
+                        "grantedAward" => $grantedAward,
+                        "count" => 1
+                    ];
+                }
+            }
+        }
+
+        return $userGrantAwards;
     }
 }

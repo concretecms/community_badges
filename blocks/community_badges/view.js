@@ -122,8 +122,8 @@ var stackBottomModal = new _pnotify_core__WEBPACK_IMPORTED_MODULE_0__["Stack"]({
 $(".community-award-modal").each(function (index, element) {
   var $modal = $(element);
   $modal.find(".btn-primary").click(function () {
-    var grantedAwardId = $modal.find("input[name=grantedAwardId]").val();
-    var user = $modal.find("select[name=user]").val();
+    var grantedAwardId = $modal.find("[name=grantedAwardId]").val();
+    var user = $modal.find("[name=user]").val();
     $.ajax({
       url: CCM_DISPATCHER_FILENAME + "/api/v1/community_badges/give_award",
       method: "POST",

@@ -459,6 +459,18 @@ class AwardService
 
     /**
      * @param AwardGrant $grantedAward
+     */
+    public function dismissGrantedAward(
+        AwardGrant $grantedAward
+    ): void
+    {
+        $grantedAward->setDismissed(true);
+        $this->entityManager->persist($grantedAward);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param AwardGrant $grantedAward
      * @param User $user
      * @return UserBadge
      * @throws MailTransportError
@@ -634,6 +646,7 @@ class AwardService
 
         return $userBadges;
     }
+
     /**
      * @param User|null $user
      * @return AwardGrant[]

@@ -64,6 +64,8 @@ class ServiceProvider extends Provider
 
                 /** @noinspection PhpParamsInspection */
                 $groupRouter->post('/community_badges/give_award', [CommunityBadges::class, 'giveAward']);
+                $groupRouter->post('/community_badges/dismiss_grant_award', [CommunityBadges::class, 'dismissGrantAward']);
+
             });
     }
 }

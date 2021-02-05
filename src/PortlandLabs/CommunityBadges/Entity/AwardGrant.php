@@ -44,6 +44,13 @@ class AwardGrant
     protected $user;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $dismissed = false;
+
+    /**
      * @var DateTime
      *
      * @ORM\Column(type="datetime")
@@ -144,6 +151,24 @@ class AwardGrant
     public function setRedeemedAt(DateTime $redeemedAt): AwardGrant
     {
         $this->redeemedAt = $redeemedAt;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDismissed(): bool
+    {
+        return $this->dismissed;
+    }
+
+    /**
+     * @param bool $dismissed
+     * @return AwardGrant
+     */
+    public function setDismissed(bool $dismissed): AwardGrant
+    {
+        $this->dismissed = $dismissed;
         return $this;
     }
 

@@ -39,6 +39,8 @@ class ServiceProvider extends Provider
     {
         $this->registerAPI();
         $this->registerAutomationManager();
+
+        $this->app->bind(\Concrete\Core\Package\ItemCategory\Manager::class, \PortlandLabs\CommunityBadges\Package\ItemCategory\Manager::class);
     }
 
     protected function registerAutomationManager()

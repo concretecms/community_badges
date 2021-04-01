@@ -20,7 +20,7 @@ class Controller extends Package implements ProviderAggregateInterface
 {
     protected $pkgHandle = 'community_badges';
     protected $appVersionRequired = '9.0';
-    protected $pkgVersion = '0.0.3';
+    protected $pkgVersion = '0.0.5';
     protected $pkgAutoloaderRegistries = [
         'src/PortlandLabs/CommunityBadges' => 'PortlandLabs\CommunityBadges',
     ];

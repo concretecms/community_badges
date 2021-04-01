@@ -29,5 +29,24 @@
               description=""
               package="community_badges"/>
 
+        <page name="Community Points" path="/dashboard/users/points" filename="/dashboard/users/points/view.php"
+              pagetype="" package="community_badges">
+            <attributes>
+                <attributekey handle="meta_keywords">
+                    <value>community, points, karma</value>
+                </attributekey>
+            </attributes>
+        </page>
+        <page name="Assign Points" path="/dashboard/users/points/assign" filename="/dashboard/users/points/assign.php"
+              pagetype="" package="community_badges">
+        </page>
+        <page name="Actions" path="/dashboard/users/points/actions" filename="/dashboard/users/points/actions.php"
+              pagetype="" package="community_badges">
+            <attributes>
+                <attributekey handle="meta_keywords">
+                    <value>action, community actions</value>
+                </attributekey>
+            </attributes>
+        </page>
     </singlepages>
 </concrete5-cif>

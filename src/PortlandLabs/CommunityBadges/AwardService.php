@@ -178,6 +178,26 @@ class AwardService
     }
 
     /**
+     * @param string $name
+     * @return Badge
+     * @throws BadgeNotFound
+     */
+    public function getBadgeByName(
+        string $name
+    )
+    {
+        $entry = $this->badgeRepository->findOneBy([
+            "name" => $name
+        ]);
+
+        if ($entry instanceof Badge) {
+            return $entry;
+        } else {
+            throw new BadgeNotFound();
+        }
+    }
+
+    /**
      * @param int $id
      * @return AwardGrant
      * @throws GrantBadgeNotFound

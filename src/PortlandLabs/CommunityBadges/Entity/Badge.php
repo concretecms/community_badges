@@ -18,7 +18,7 @@ use DateTime;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  */
-class Badge
+class Badge implements \JsonSerializable
 {
     /**
      * @var int
@@ -151,6 +151,30 @@ class Badge
     {
         $this->createdAt = $createdAt;
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        $imageDataBase64 = '';
+        $imageFileName = '';
+
+        $image = $this->getThumbnail();
+
+        if ($image instanceof File) {
+            $imageApprovedVersion = $image->getApprovedVersion();
+
+            $imageFileName = $imageApprovedVersion->getFileName();
+            $imageDataBase64 = 'data:' . $imageApprovedVersion->getMimeType() . ';base64,' . base64_encode($imageApprovedVersion->getFileContents());
+        }
+
+        return [
+            "name" => $this->getName(),
+            "description" => $this->getDescription(),
+            "image" => [
+                "name" => $imageFileName,
+                "data" => $imageDataBase64
+            ]
+        ];
     }
 
 }

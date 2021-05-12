@@ -41,6 +41,13 @@ class Badge implements \JsonSerializable
      *
      * @ORM\Column(type="string")
      */
+    protected $handle = "";
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
     protected $description = "";
 
     /**
@@ -150,6 +157,24 @@ class Badge implements \JsonSerializable
     public function setCreatedAt(DateTime $createdAt): Badge
     {
         $this->createdAt = $createdAt;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHandle(): string
+    {
+        return $this->handle;
+    }
+
+    /**
+     * @param string $handle
+     * @return Badge
+     */
+    public function setHandle(string $handle): Badge
+    {
+        $this->handle = $handle;
         return $this;
     }
 

@@ -158,6 +158,26 @@ class AwardService
     }
 
     /**
+     * @param string $handle
+     * @return Badge
+     * @throws BadgeNotFound
+     */
+    public function getBadgeByHandle(
+        string $handle
+    ): Badge
+    {
+        $entry = $this->badgeRepository->findOneBy([
+            "handle" => $handle
+        ]);
+
+        if ($entry instanceof Badge) {
+            return $entry;
+        } else {
+            throw new BadgeNotFound();
+        }
+    }
+
+    /**
      * @param int $id
      * @return Badge
      * @throws BadgeNotFound

@@ -46,6 +46,7 @@ class Badges extends DashboardPageController
     {
         $this->validationService->setData($this->request->request->all());
         $this->validationService->addRequired("name", t("Please enter a name."));
+        $this->validationService->addRequired("handle", t("Please enter a handle."));
         $this->validationService->addRequired("description", t("Please enter description."));
 
         if ($this->validationService->test()) {
@@ -62,6 +63,7 @@ class Badges extends DashboardPageController
     {
         $badge->setDescription($this->request->request->get("description"));
         $badge->setName($this->request->request->get("name"));
+        $badge->setHandle($this->request->request->get("handle"));
         $badge->setThumbnail(File::getByID($this->request->request->getInt("thumbnail")));
 
         $this->awardService->saveBadge($badge);

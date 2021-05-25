@@ -4,6 +4,19 @@
         <blocktype handle="community_badges" package="community_badges"/>
     </blocktypes>
 
+    <attributetypes>
+        <attributetype handle="badge_selector" name="Badge Selector" package="community_badges">
+            <categories>
+                <category handle="collection"/>
+                <category handle="user"/>
+                <category handle="file"/>
+                <category handle="site"/>
+                <category handle="event"/>
+                <category handle="site_type"/>
+                <category handle="express"/>
+            </categories>
+        </attributetype>
+    </attributetypes>
     <singlepages>
         <page name="Badges" path="/dashboard/users/badges" filename="/dashboard/users/badges.php" pagetype=""
               description=""
@@ -19,12 +32,14 @@
               description=""
               package="community_badges"/>
 
-        <page name="Community Badges" path="/dashboard/system/community_badges" filename="/dashboard/system/community_badges.php"
+        <page name="Community Badges" path="/dashboard/system/community_badges"
+              filename="/dashboard/system/community_badges.php"
               pagetype=""
               description=""
               package="community_badges"/>
 
-        <page name="Automation" path="/dashboard/system/community_badges/automation" filename="/dashboard/system/community_badges/automation.php"
+        <page name="Automation" path="/dashboard/system/community_badges/automation"
+              filename="/dashboard/system/community_badges/automation.php"
               pagetype=""
               description=""
               package="community_badges"/>

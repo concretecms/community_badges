@@ -49,6 +49,11 @@ $token = $app->make(Token::class);
     </div>
 
     <div class="form-group">
+        <?php echo $form->label("handle", t("Handle")); ?>
+        <?php echo $form->text("handle", $badge->getHandle()); ?>
+    </div>
+
+    <div class="form-group">
         <?php echo $form->label("description", t("Description")); ?>
         <?php echo $editor->outputStandardEditor("description", $badge->getDescription()); ?>
     </div>

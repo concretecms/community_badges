@@ -13,7 +13,6 @@ namespace PortlandLabs\CommunityBadges;
 use Concrete\Core\Mail\Service;
 use Concrete\Core\User\User;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\ORM\EntityManagerInterface;
 use PortlandLabs\CommunityBadges\Entity\Achievement;
 use PortlandLabs\CommunityBadges\Entity\Award;
@@ -412,8 +411,8 @@ class AwardService
                     ->setParameter(":uID", $userInfo->getUserID())
                     ->setParameter(":badgeId", $achievement->getId())
                     ->execute()
-                    ->fetchOne();
-            } catch (DbalException $e) {
+                    ->fetchColumn();
+            } catch (Exception $e) {
                 $countOfBadges = 0;
             }
 

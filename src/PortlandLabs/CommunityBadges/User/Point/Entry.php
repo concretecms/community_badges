@@ -1,8 +1,12 @@
 <?php
 namespace PortlandLabs\CommunityBadges\User\Point;
 
+use Concrete\Core\Events\EventDispatcher;
+use Concrete\Core\Support\Facade\Application;
 use Loader;
 use Concrete\Core\User\UserInfo;
+use PortlandLabs\CommunityBadges\Events\AfterAssignCommunityPoints;
+use PortlandLabs\CommunityBadges\Events\BeforeAssignCommunityPoints;
 use PortlandLabs\CommunityBadges\User\Point\Action\Action as UserPointAction;
 
 class Entry
@@ -29,6 +33,15 @@ class Entry
 
     public function save()
     {
+
+        $app = Application::getFacadeApplication();
+        /** @var EventDispatcher $eventDispatcher */
+        $eventDispatcher = $app->make(EventDispatcher::class);
+
+        $event = new BeforeAssignCommunityPoints();
+        $event->setEntry($this);
+        $eventDispatcher->dispatch("on_before_assign_community_points", $event);
+
         $db = Loader::db();
         if ($this->upID) {
             $db->update('UserPointHistory', array(
@@ -49,6 +62,10 @@ class Entry
                 'timestamp' => date('Y-m-d H:i:s'),
             ));
         }
+
+        $event = new AfterAssignCommunityPoints();
+        $event->setEntry($this);
+        $eventDispatcher->dispatch("on_after_assign_community_points", $event);
     }
 
     public function delete()

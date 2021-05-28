@@ -9,9 +9,9 @@
 
 defined('C5_EXECUTE') or die('Access denied');
 
+use Concrete\Core\Entity\File\File;
 use Concrete\Core\Entity\File\Version;
 use Concrete\Core\Entity\Package as PackageEntity;
-use Concrete\Core\File\File;
 use Concrete\Core\Form\Service\Form;
 use Concrete\Core\Form\Service\Widget\UserSelector;
 use Concrete\Core\Package\PackageService;

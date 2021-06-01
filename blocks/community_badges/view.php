@@ -163,62 +163,73 @@ $user = new User();
             <div class="card-text">
                 <div class="row">
                     <div class="col">
-                        <div class="profile-badges">
-                            <?php foreach ($awards as $award) { ?>
-                                <div class="profile-badge">
-                                    <?php
-                                    $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
+                        <?php if (count($awards) > 0) { ?>
+                            <div class="profile-badges">
+                                <?php foreach ($awards as $award) { ?>
+                                    <div class="profile-badge">
+                                        <?php
+                                        $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
 
-                                    $userBadge = $award["userBadge"];
+                                        $userBadge = $award["userBadge"];
 
-                                    if ($userBadge instanceof UserBadge) {
-                                        if ($userBadge->getBadge() instanceof Badge) {
-                                            $badgeThumbnail = $userBadge->getBadge()->getThumbnail();
-                                            if ($badgeThumbnail instanceof File) {
-                                                $badgeThumbnailVersion = $badgeThumbnail->getApprovedVersion();
-                                                if ($badgeThumbnailVersion instanceof Version) {
-                                                    $badgeUrl = $badgeThumbnailVersion->getURL();
+                                        if ($userBadge instanceof UserBadge) {
+                                            if ($userBadge->getBadge() instanceof Badge) {
+                                                $badgeThumbnail = $userBadge->getBadge()->getThumbnail();
+                                                if ($badgeThumbnail instanceof File) {
+                                                    $badgeThumbnailVersion = $badgeThumbnail->getApprovedVersion();
+                                                    if ($badgeThumbnailVersion instanceof Version) {
+                                                        $badgeUrl = $badgeThumbnailVersion->getURL();
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
 
-                                    $imageElement = new Image($badgeUrl, $userBadge->getBadge()->getName());
+                                        $imageElement = new Image($badgeUrl, $userBadge->getBadge()->getName());
 
-                                    if ($award["count"] > 1) {
-                                        $imageWrapper = new Element("div");
-                                        $imageWrapper->addClass("badge-container");
-                                        /** @noinspection PhpParamsInspection */
-                                        $imageWrapper->appendChild($imageElement);
-                                        $imageWrapper->appendChild(new Element("div", $award["count"], ["class" => "badge-counter", "style" => "margin: 0;"]));
-                                        echo $imageWrapper;
-                                    } else {
-                                        echo $imageElement;
-                                    }
+                                        if ($award["count"] > 1) {
+                                            $imageWrapper = new Element("div");
+                                            $imageWrapper->addClass("badge-container");
+                                            /** @noinspection PhpParamsInspection */
+                                            $imageWrapper->appendChild($imageElement);
+                                            $imageWrapper->appendChild(new Element("div", $award["count"], ["class" => "badge-counter", "style" => "margin: 0;"]));
+                                            echo $imageWrapper;
+                                        } else {
+                                            echo $imageElement;
+                                        }
 
-                                    ?>
-                                </div>
-                            <?php } ?>
-                        </div>
+                                        ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        <?php } else { ?>
+                            <div class="none-entered">
+                                <?php echo t("None Entered"); ?>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
         </div>
     <?php } ?>
 
-    <?php if (count($achievements) > 0) { ?>
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">
-                    <span>
-                        <?php echo t("Achievements"); ?>
-                    </span>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title">
+                <span>
+                    <?php echo t("Achievements"); ?>
+                </span>
 
-            <div class="card-text">
-                <div class="row">
-                    <div class="col">
+                <a href="<?php echo (string)Url::to('/account/karma') ?>"
+                   class="btn btn-sm btn-secondary float-right">
+                    <?php echo t("Earn Achievements"); ?>
+                </a>
+            </div>
+        </div>
+
+        <div class="card-text">
+            <div class="row">
+                <div class="col">
+                    <?php if (count($achievements) > 0) { ?>
                         <div class="profile-badges">
                             <?php foreach ($achievements as $userBadge) { ?>
                                 <div class="profile-badge">
@@ -241,9 +252,13 @@ $user = new User();
                                 </div>
                             <?php } ?>
                         </div>
-                    </div>
+                    <?php } else { ?>
+                        <div class="none-entered">
+                            <?php echo t("None Entered"); ?>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
-    <?php } ?>
+    </div>
 </div>

@@ -26,9 +26,10 @@ use PortlandLabs\CommunityBadges\Entity\Badge;
 use PortlandLabs\CommunityBadges\Entity\UserBadge;
 use PortlandLabs\CommunityBadges\Entity\AwardGrant;
 
+/** @var bool $isOwnProfile */
 /** @var AwardGrant[] $grantedAwards */
-/** @var UserBadge[] $achievements */
-/** @var UserBadge[] $awards */
+/** @var UserBadge[] $certifications */
+/** @var UserBadge[] $badges */
 
 $app = Application::getFacadeApplication();
 /** @var Identifier $idHelper */
@@ -47,12 +48,12 @@ $user = new User();
 ?>
 
 <div class="public-profile" style="margin-top: 0">
-    <?php if (count($grantedAwards) > 0 && $user->isRegistered()) { ?>
+    <?php if ($isOwnProfile && count($grantedAwards) > 0) { ?>
         <div class="card">
             <div class="card-body">
                 <div class="card-title">
                     <span>
-                        <?php echo t("Granted Awards"); ?>
+                        <?php echo t("Awards"); ?>
                     </span>
                 </div>
             </div>
@@ -150,27 +151,34 @@ $user = new User();
         </div>
     <?php } ?>
 
-    <?php if (count($awards) > 0) { ?>
+    <?php if (count($badges) > 0) { ?>
         <div class="card">
             <div class="card-body">
                 <div class="card-title">
                     <span>
-                        <?php echo t("Awards"); ?>
+                        <?php echo t("Certifications"); ?>
                     </span>
+
+                    <?php if ($isOwnProfile) { ?>
+                        <a href="https://training.concretecms.com/"
+                           class="btn btn-sm btn-secondary float-right">
+                            <?php echo t("Get Certified"); ?>
+                        </a>
+                    <?php } ?>
                 </div>
             </div>
 
             <div class="card-text">
                 <div class="row">
                     <div class="col">
-                        <?php if (count($awards) > 0) { ?>
+                        <?php if (count($certifications) > 0) { ?>
                             <div class="profile-badges">
-                                <?php foreach ($awards as $award) { ?>
+                                <?php foreach ($certifications as $certification) { ?>
                                     <div class="profile-badge">
                                         <?php
                                         $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
 
-                                        $userBadge = $award["userBadge"];
+                                        $userBadge = $certification["userBadge"];
 
                                         if ($userBadge instanceof UserBadge) {
                                             if ($userBadge->getBadge() instanceof Badge) {
@@ -186,12 +194,12 @@ $user = new User();
 
                                         $imageElement = new Image($badgeUrl, $userBadge->getBadge()->getName());
 
-                                        if ($award["count"] > 1) {
+                                        if ($certification["count"] > 1) {
                                             $imageWrapper = new Element("div");
                                             $imageWrapper->addClass("badge-container");
                                             /** @noinspection PhpParamsInspection */
                                             $imageWrapper->appendChild($imageElement);
-                                            $imageWrapper->appendChild(new Element("div", $award["count"], ["class" => "badge-counter", "style" => "margin: 0;"]));
+                                            $imageWrapper->appendChild(new Element("div", $certification["count"], ["class" => "badge-counter", "style" => "margin: 0;"]));
                                             echo $imageWrapper;
                                         } else {
                                             echo $imageElement;
@@ -212,53 +220,73 @@ $user = new User();
         </div>
     <?php } ?>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="card-title">
-                <span>
-                    <?php echo t("Achievements"); ?>
-                </span>
+    <?php if (count($badges) > 0) { ?>
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <span>
+                        <?php echo t("Achievements"); ?>
+                    </span>
 
-                <a href="<?php echo (string)Url::to('/account/karma') ?>"
-                   class="btn btn-sm btn-secondary float-right">
-                    <?php echo t("Earn Achievements"); ?>
-                </a>
-            </div>
-        </div>
-
-        <div class="card-text">
-            <div class="row">
-                <div class="col">
-                    <?php if (count($achievements) > 0) { ?>
-                        <div class="profile-badges">
-                            <?php foreach ($achievements as $userBadge) { ?>
-                                <div class="profile-badge">
-                                    <?php
-                                    $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
-
-                                    if ($userBadge->getBadge() instanceof Badge) {
-                                        $badgeThumbnail = $userBadge->getBadge()->getThumbnail();
-                                        if ($badgeThumbnail instanceof File) {
-                                            $badgeThumbnailVersion = $badgeThumbnail->getApprovedVersion();
-                                            if ($badgeThumbnailVersion instanceof Version) {
-                                                $badgeUrl = $badgeThumbnailVersion->getURL();
-                                            }
-                                        }
-                                    }
-
-                                    $imageElement = new Image($badgeUrl, $userBadge->getBadge()->getName());
-                                    echo $imageElement;
-                                    ?>
-                                </div>
-                            <?php } ?>
-                        </div>
-                    <?php } else { ?>
-                        <div class="none-entered">
-                            <?php echo t("None Entered"); ?>
-                        </div>
+                    <?php if ($isOwnProfile) { ?>
+                        <a href="<?php echo (string)Url::to('/account/karma') ?>"
+                           class="btn btn-sm btn-secondary float-right">
+                            <?php echo t("Earn Achievements"); ?>
+                        </a>
                     <?php } ?>
                 </div>
             </div>
+
+            <div class="card-text">
+                <div class="row">
+                    <div class="col">
+                        <?php if (count($badges) > 0) { ?>
+                            <div class="profile-badges">
+                                <?php foreach ($badges as $badge) { ?>
+                                    <div class="profile-badge">
+                                        <?php
+                                        $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
+
+                                        $userBadge = $badge["userBadge"];
+
+                                        if ($userBadge instanceof UserBadge) {
+                                            if ($userBadge->getBadge() instanceof Badge) {
+                                                $badgeThumbnail = $userBadge->getBadge()->getThumbnail();
+                                                if ($badgeThumbnail instanceof File) {
+                                                    $badgeThumbnailVersion = $badgeThumbnail->getApprovedVersion();
+                                                    if ($badgeThumbnailVersion instanceof Version) {
+                                                        $badgeUrl = $badgeThumbnailVersion->getURL();
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        $imageElement = new Image($badgeUrl, $userBadge->getBadge()->getName());
+
+                                        if ($badge["count"] > 1) {
+                                            $imageWrapper = new Element("div");
+                                            $imageWrapper->addClass("badge-container");
+                                            /** @noinspection PhpParamsInspection */
+                                            $imageWrapper->appendChild($imageElement);
+                                            $imageWrapper->appendChild(new Element("div", $badge["count"], ["class" => "badge-counter", "style" => "margin: 0;"]));
+                                            echo $imageWrapper;
+                                        } else {
+                                            echo $imageElement;
+                                        }
+
+                                        ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        <?php } else { ?>
+                            <div class="none-entered">
+                                <?php echo t("None Entered"); ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    <?php } ?>
+
 </div>

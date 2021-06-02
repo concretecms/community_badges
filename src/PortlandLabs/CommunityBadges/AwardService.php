@@ -688,6 +688,38 @@ class AwardService
 
     /**
      * @param User|null $user
+     * @return UserBadge[]
+     */
+    public function getAllBadgesGroupedByUser(
+        ?User $user = null
+    ): iterable
+    {
+        $userBadges = [];
+
+        foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
+            $badgeAdded = false;
+
+            foreach ($userBadges as $index => $addedBadge) {
+                if ($addedBadge["userBadge"]->getBadge()->getId() === $userBadge->getBadge()->getId()) {
+                    $userBadges[$index]["count"]++;
+                    $badgeAdded = true;
+                    break;
+                }
+            }
+
+            if (!$badgeAdded) {
+                $userBadges[] = [
+                    "userBadge" => $userBadge,
+                    "count" => 1
+                ];
+            }
+        }
+
+        return $userBadges;
+    }
+
+    /**
+     * @param User|null $user
      * @return AwardGrant[]
      */
     public function getAllGrantedAwardsGroupedByUser(

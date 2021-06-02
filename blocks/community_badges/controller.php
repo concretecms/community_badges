@@ -99,7 +99,7 @@ class Controller extends BlockController
             // Retrieve the user badges and split them into certifications + all others
             $this->splitBadgesByPrefix(
                 $this->awardService->getAllBadgesGroupedByUser($user),
-                "test_",
+                "certification_test_",
                 $certifications,
                 $badges
             );

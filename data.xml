@@ -4,6 +4,19 @@
         <blocktype handle="community_badges" package="community_badges"/>
     </blocktypes>
 
+    <attributetypes>
+        <attributetype handle="badge_selector" name="Badge Selector" package="community_badges">
+            <categories>
+                <category handle="collection"/>
+                <category handle="user"/>
+                <category handle="file"/>
+                <category handle="site"/>
+                <category handle="event"/>
+                <category handle="site_type"/>
+                <category handle="express"/>
+            </categories>
+        </attributetype>
+    </attributetypes>
     <singlepages>
         <page name="Badges" path="/dashboard/users/badges" filename="/dashboard/users/badges.php" pagetype=""
               description=""
@@ -19,5 +32,36 @@
               description=""
               package="community_badges"/>
 
+        <page name="Community Badges" path="/dashboard/system/community_badges"
+              filename="/dashboard/system/community_badges.php"
+              pagetype=""
+              description=""
+              package="community_badges"/>
+
+        <page name="Automation" path="/dashboard/system/community_badges/automation"
+              filename="/dashboard/system/community_badges/automation.php"
+              pagetype=""
+              description=""
+              package="community_badges"/>
+
+        <page name="Community Points" path="/dashboard/users/points" filename="/dashboard/users/points/view.php"
+              pagetype="" package="community_badges">
+            <attributes>
+                <attributekey handle="meta_keywords">
+                    <value>community, points, karma</value>
+                </attributekey>
+            </attributes>
+        </page>
+        <page name="Assign Points" path="/dashboard/users/points/assign" filename="/dashboard/users/points/assign.php"
+              pagetype="" package="community_badges">
+        </page>
+        <page name="Actions" path="/dashboard/users/points/actions" filename="/dashboard/users/points/actions.php"
+              pagetype="" package="community_badges">
+            <attributes>
+                <attributekey handle="meta_keywords">
+                    <value>action, community actions</value>
+                </attributekey>
+            </attributes>
+        </page>
     </singlepages>
 </concrete5-cif>

@@ -13,13 +13,14 @@ use Concrete\Core\Application\UserInterface\Dashboard\Navigation\NavigationCache
 use Concrete\Core\Database\EntityManager\Provider\ProviderAggregateInterface;
 use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
 use Concrete\Core\Package\Package;
+use PortlandLabs\CommunityBadges\Console\Command\ProcessAutomatedRules;
 use PortlandLabs\CommunityBadges\Provider\ServiceProvider;
 
 class Controller extends Package implements ProviderAggregateInterface
 {
     protected $pkgHandle = 'community_badges';
     protected $appVersionRequired = '9.0';
-    protected $pkgVersion = '0.0.1';
+    protected $pkgVersion = '0.0.7';
     protected $pkgAutoloaderRegistries = [
         'src/PortlandLabs/CommunityBadges' => 'PortlandLabs\CommunityBadges',
     ];
@@ -46,6 +47,11 @@ class Controller extends Package implements ProviderAggregateInterface
         /** @var ServiceProvider $serviceProvider */
         $serviceProvider = $this->app->make(ServiceProvider::class);
         $serviceProvider->register();
+
+        if ($this->app->isRunThroughCommandLineInterface()) {
+            $console = $this->app->make('console');
+            $console->add(new ProcessAutomatedRules());
+        }
     }
 
     public function install()
@@ -56,6 +62,14 @@ class Controller extends Package implements ProviderAggregateInterface
         $navigationCache = $this->app->make(NavigationCache::class);
         $navigationCache->clear();
         return $pkg;
+    }
+
+    public function upgrade()
+    {
+        parent::upgrade();
+        $this->installContentFile("data.xml");
+        $navigationCache = $this->app->make(NavigationCache::class);
+        $navigationCache->clear();
     }
 
 }

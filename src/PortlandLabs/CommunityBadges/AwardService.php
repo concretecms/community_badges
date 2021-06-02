@@ -13,7 +13,6 @@ namespace PortlandLabs\CommunityBadges;
 use Concrete\Core\Mail\Service;
 use Concrete\Core\User\User;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\ORM\EntityManagerInterface;
 use PortlandLabs\CommunityBadges\Entity\Achievement;
 use PortlandLabs\CommunityBadges\Entity\Award;
@@ -158,6 +157,26 @@ class AwardService
     }
 
     /**
+     * @param string $handle
+     * @return Badge
+     * @throws BadgeNotFound
+     */
+    public function getBadgeByHandle(
+        string $handle
+    ): Badge
+    {
+        $entry = $this->badgeRepository->findOneBy([
+            "handle" => $handle
+        ]);
+
+        if ($entry instanceof Badge) {
+            return $entry;
+        } else {
+            throw new BadgeNotFound();
+        }
+    }
+
+    /**
      * @param int $id
      * @return Badge
      * @throws BadgeNotFound
@@ -168,6 +187,26 @@ class AwardService
     {
         $entry = $this->badgeRepository->findOneBy([
             "id" => $id
+        ]);
+
+        if ($entry instanceof Badge) {
+            return $entry;
+        } else {
+            throw new BadgeNotFound();
+        }
+    }
+
+    /**
+     * @param string $name
+     * @return Badge
+     * @throws BadgeNotFound
+     */
+    public function getBadgeByName(
+        string $name
+    )
+    {
+        $entry = $this->badgeRepository->findOneBy([
+            "name" => $name
         ]);
 
         if ($entry instanceof Badge) {
@@ -372,8 +411,8 @@ class AwardService
                     ->setParameter(":uID", $userInfo->getUserID())
                     ->setParameter(":badgeId", $achievement->getId())
                     ->execute()
-                    ->fetchOne();
-            } catch (DbalException $e) {
+                    ->fetchColumn();
+            } catch (Exception $e) {
                 $countOfBadges = 0;
             }
 
@@ -459,6 +498,18 @@ class AwardService
 
     /**
      * @param AwardGrant $grantedAward
+     */
+    public function dismissGrantedAward(
+        AwardGrant $grantedAward
+    ): void
+    {
+        $grantedAward->setDismissed(true);
+        $this->entityManager->persist($grantedAward);
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @param AwardGrant $grantedAward
      * @param User $user
      * @return UserBadge
      * @throws MailTransportError
@@ -533,7 +584,7 @@ class AwardService
 
         if ($user->isRegistered()) {
             return $this->grantAwardRepository->findBy([
-                "user" => $user,
+                "user" => $user->getUserInfoObject()->getEntityObject(),
                 "redeemedAt" => null
             ]);
         } else {
@@ -599,5 +650,75 @@ class AwardService
         }
 
         return $userBadges;
+    }
+
+    /**
+     * @param User|null $user
+     * @return UserBadge[]
+     */
+    public function getAllAwardsGroupedByUser(
+        ?User $user = null
+    ): iterable
+    {
+        $userBadges = [];
+
+        foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
+            if ($userBadge->getBadge() instanceof Award) {
+                $badgeAdded = false;
+
+                foreach ($userBadges as $index => $addedBadge) {
+                    if ($addedBadge["userBadge"]->getBadge()->getId() === $userBadge->getBadge()->getId()) {
+                        $userBadges[$index]["count"]++;
+                        $badgeAdded = true;
+                        break;
+                    }
+                }
+
+                if (!$badgeAdded) {
+                    $userBadges[] = [
+                        "userBadge" => $userBadge,
+                        "count" => 1
+                    ];
+                }
+            }
+        }
+
+        return $userBadges;
+    }
+
+    /**
+     * @param User|null $user
+     * @return AwardGrant[]
+     */
+    public function getAllGrantedAwardsGroupedByUser(
+        ?User $user = null
+    ): iterable
+    {
+        $userGrantAwards = [];
+
+        foreach ($this->getAllGrantedAwardsByUser($user) as $grantedAward) {
+            /** @var AwardGrant $grantedAward */
+
+            if ($grantedAward->getAward() instanceof Award) {
+                $grantAwardAdded = false;
+
+                foreach ($userGrantAwards as $index => $addedGrantAward) {
+                    if ($addedGrantAward["grantedAward"]->getAward()->getId() === $grantedAward->getAward()->getId()) {
+                        $userGrantAwards[$index]["count"]++;
+                        $grantAwardAdded = true;
+                        break;
+                    }
+                }
+
+                if (!$grantAwardAdded) {
+                    $userGrantAwards[] = [
+                        "grantedAward" => $grantedAward,
+                        "count" => 1
+                    ];
+                }
+            }
+        }
+
+        return $userGrantAwards;
     }
 }

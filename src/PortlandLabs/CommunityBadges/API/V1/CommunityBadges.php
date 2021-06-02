@@ -70,7 +70,7 @@ class CommunityBadges
                 $errorList->add(t("You need to select a user."));
             } catch (NoAuthorization $e) {
                 $errorList->add(t("You can't give away an granted award that you don't own by yourself."));
-            }catch (InvalidSelfAssignment $e) {
+            } catch (InvalidSelfAssignment $e) {
                 $errorList->add(t("You can't award yourself."));
             }
         }
@@ -80,4 +80,28 @@ class CommunityBadges
         return new JsonResponse($editResponse);
     }
 
+    public function dismissGrantAward()
+    {
+        $editResponse = new EditResponse();
+        $errorList = new ErrorList();
+
+        if (!$this->request->request->has("grantedAwardId") || $this->request->request->getInt("grantedAwardId") === 0) {
+            $errorList->add(t("Missing granted award id."));
+        } else {
+            $grantAwardId = $this->request->request->getInt("grantedAwardId", 0);
+
+            try {
+                $grantedAward = $this->awardService->getGrantAwardById((int)$grantAwardId);
+                $this->awardService->dismissGrantedAward($grantedAward);
+            } catch (GrantBadgeNotFound $e) {
+                $errorList->add(t("You need to select a valid grant award."));
+            }
+
+            $editResponse->setMessage(t("Award successfully dismissed."));
+        }
+
+        $editResponse->setError($errorList);
+
+        return new JsonResponse($editResponse);
+    }
 }

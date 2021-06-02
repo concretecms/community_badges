@@ -9,11 +9,20 @@
 
 defined('C5_EXECUTE') or die('Access denied');
 
+use Concrete\Core\Entity\File\File;
+use Concrete\Core\Entity\File\Version;
+use Concrete\Core\Entity\Package as PackageEntity;
 use Concrete\Core\Form\Service\Form;
 use Concrete\Core\Form\Service\Widget\UserSelector;
+use Concrete\Core\Package\PackageService;
+use Concrete\Core\Support\Facade\Url;
 use Concrete\Core\User\User;
 use Concrete\Core\Support\Facade\Application;
 use Concrete\Core\Utility\Service\Identifier;
+use Concrete\Package\CommunityBadges\Controller;
+use HtmlObject\Element;
+use HtmlObject\Image;
+use PortlandLabs\CommunityBadges\Entity\Badge;
 use PortlandLabs\CommunityBadges\Entity\UserBadge;
 use PortlandLabs\CommunityBadges\Entity\AwardGrant;
 
@@ -28,6 +37,12 @@ $idHelper = $app->make(Identifier::class);
 $form = $app->make(Form::class);
 /** @var UserSelector $userSelector */
 $userSelector = $app->make(UserSelector::class);
+/** @var PackageService $packageService */
+$packageService = $app->make(PackageService::class);
+/** @var PackageEntity $packageEntity */
+$packageEntity = $packageService->getByHandle("community_badges");
+/** @var Controller $package */
+$package = $packageEntity->getController();
 $user = new User();
 ?>
 
@@ -56,8 +71,39 @@ $user = new User();
                                        class="give-award"
                                        data-toggle="modal" data-target="#<?php echo $id; ?>"
                                     >
-                                        <img src="<?php echo $grantedAward->getAward()->getThumbnail()->getApprovedVersion()->getURL(); ?>"
-                                             alt="<?php echo h($grantedAward->getAward()->getName()); ?>">
+                                        <div class="profile-badge">
+                                            <?php
+                                            $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
+
+                                            $grantedAwardEntry = $grantedAward["grantedAward"];
+
+                                            if ($grantedAwardEntry instanceof AwardGrant) {
+                                                if ($grantedAwardEntry->getAward() instanceof Badge) {
+                                                    $badgeThumbnail = $grantedAwardEntry->getAward()->getThumbnail();
+                                                    if ($badgeThumbnail instanceof File) {
+                                                        $badgeThumbnailVersion = $badgeThumbnail->getApprovedVersion();
+                                                        if ($badgeThumbnailVersion instanceof Version) {
+                                                            $badgeUrl = $badgeThumbnailVersion->getURL();
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            $imageElement = new Image($badgeUrl, $grantedAwardEntry->getAward()->getName());
+
+                                            if ($grantedAward["count"] > 1) {
+                                                $imageWrapper = new Element("div");
+                                                $imageWrapper->addClass("badge-container");
+                                                /** @noinspection PhpParamsInspection */
+                                                $imageWrapper->appendChild($imageElement);
+                                                $imageWrapper->appendChild(new Element("div", $grantedAward["count"], ["class" => "badge-counter", "style" => "margin: 0;"]));
+                                                echo $imageWrapper;
+                                            } else {
+                                                echo $imageElement;
+                                            }
+
+                                            ?>
+                                        </div>
                                     </a>
                                 </div>
 
@@ -72,7 +118,7 @@ $user = new User();
                                             </div>
 
                                             <div class="modal-body">
-                                                <?php echo $form->hidden("grantedAwardId", $grantedAward->getId()); ?>
+                                                <?php echo $form->hidden("grantedAwardId", $grantedAwardEntry->getId()); ?>
 
                                                 <div class="form-group">
                                                     <?php echo $form->label("user", t("User")); ?>
@@ -117,44 +163,102 @@ $user = new User();
             <div class="card-text">
                 <div class="row">
                     <div class="col">
-                        <div class="profile-badges">
-                            <?php foreach ($awards as $userBadge) { ?>
-                                <div class="profile-badge">
-                                    <img src="<?php echo $userBadge->getBadge()->getThumbnail()->getApprovedVersion()->getURL(); ?>"
-                                         alt="<?php echo h($userBadge->getBadge()->getName()); ?>">
-                                </div>
-                            <?php } ?>
-                        </div>
+                        <?php if (count($awards) > 0) { ?>
+                            <div class="profile-badges">
+                                <?php foreach ($awards as $award) { ?>
+                                    <div class="profile-badge">
+                                        <?php
+                                        $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
+
+                                        $userBadge = $award["userBadge"];
+
+                                        if ($userBadge instanceof UserBadge) {
+                                            if ($userBadge->getBadge() instanceof Badge) {
+                                                $badgeThumbnail = $userBadge->getBadge()->getThumbnail();
+                                                if ($badgeThumbnail instanceof File) {
+                                                    $badgeThumbnailVersion = $badgeThumbnail->getApprovedVersion();
+                                                    if ($badgeThumbnailVersion instanceof Version) {
+                                                        $badgeUrl = $badgeThumbnailVersion->getURL();
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        $imageElement = new Image($badgeUrl, $userBadge->getBadge()->getName());
+
+                                        if ($award["count"] > 1) {
+                                            $imageWrapper = new Element("div");
+                                            $imageWrapper->addClass("badge-container");
+                                            /** @noinspection PhpParamsInspection */
+                                            $imageWrapper->appendChild($imageElement);
+                                            $imageWrapper->appendChild(new Element("div", $award["count"], ["class" => "badge-counter", "style" => "margin: 0;"]));
+                                            echo $imageWrapper;
+                                        } else {
+                                            echo $imageElement;
+                                        }
+
+                                        ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        <?php } else { ?>
+                            <div class="none-entered">
+                                <?php echo t("None Entered"); ?>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
             </div>
         </div>
     <?php } ?>
 
-    <?php if (count($achievements) > 0) { ?>
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">
-                    <span>
-                        <?php echo t("Achievements"); ?>
-                    </span>
-                </div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="card-title">
+                <span>
+                    <?php echo t("Achievements"); ?>
+                </span>
 
-            <div class="card-text">
-                <div class="row">
-                    <div class="col">
+                <a href="<?php echo (string)Url::to('/account/karma') ?>"
+                   class="btn btn-sm btn-secondary float-right">
+                    <?php echo t("Earn Achievements"); ?>
+                </a>
+            </div>
+        </div>
+
+        <div class="card-text">
+            <div class="row">
+                <div class="col">
+                    <?php if (count($achievements) > 0) { ?>
                         <div class="profile-badges">
                             <?php foreach ($achievements as $userBadge) { ?>
                                 <div class="profile-badge">
-                                    <img src="<?php echo $userBadge->getBadge()->getThumbnail()->getApprovedVersion()->getURL(); ?>"
-                                         alt="<?php echo h($userBadge->getBadge()->getName()); ?>">
+                                    <?php
+                                    $badgeUrl = $package->getRelativePath() . "/images/default_badge.png";
+
+                                    if ($userBadge->getBadge() instanceof Badge) {
+                                        $badgeThumbnail = $userBadge->getBadge()->getThumbnail();
+                                        if ($badgeThumbnail instanceof File) {
+                                            $badgeThumbnailVersion = $badgeThumbnail->getApprovedVersion();
+                                            if ($badgeThumbnailVersion instanceof Version) {
+                                                $badgeUrl = $badgeThumbnailVersion->getURL();
+                                            }
+                                        }
+                                    }
+
+                                    $imageElement = new Image($badgeUrl, $userBadge->getBadge()->getName());
+                                    echo $imageElement;
+                                    ?>
                                 </div>
                             <?php } ?>
                         </div>
-                    </div>
+                    <?php } else { ?>
+                        <div class="none-entered">
+                            <?php echo t("None Entered"); ?>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>
-    <?php } ?>
+    </div>
 </div>

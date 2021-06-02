@@ -59,13 +59,17 @@ class Controller extends BlockController
 
         $currentPage = Page::getCurrentPage();
         $profile = $currentPage->getPageController()->get("profile");
+        $currentUser = new User();
 
         if ($profile instanceof UserInfo) {
             $user = User::getByUserID($profile->getUserID());
 
-            $grantedAwards = $this->awardService->getAllGrantedAwardsByUser($user);
+            if ($currentUser->isRegistered() && $profile->getUserID() == $currentUser->getUserID()) {
+                $grantedAwards = $this->awardService->getAllGrantedAwardsGroupedByUser($user);
+            }
+
             $achievements = $this->awardService->getAllAchievementsByUser($user);
-            $awards = $this->awardService->getAllAwardsByUser($user);
+            $awards = $this->awardService->getAllAwardsGroupedByUser($user);
         }
 
         $this->set('grantedAwards', $grantedAwards);

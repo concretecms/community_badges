@@ -26,8 +26,8 @@ $(".community-award-modal").each((index, element) => {
     let $modal = $(element);
 
     $modal.find(".btn-primary").click(() => {
-        let grantedAwardId = $modal.find("input[name=grantedAwardId]").val();
-        let user = $modal.find("select[name=user]").val();
+        let grantedAwardId = $modal.find("[name=grantedAwardId]").val();
+        let user = $modal.find("[name=user]").val();
 
         $.ajax({
             url: CCM_DISPATCHER_FILENAME + "/api/v1/community_badges/give_award",

@@ -15,6 +15,8 @@ use Concrete\Core\Http\Middleware\OAuthAuthenticationMiddleware;
 use Concrete\Core\Routing\Router;
 use PortlandLabs\CommunityBadges\API\V1\CommunityBadges;
 use PortlandLabs\CommunityBadges\API\V1\Middleware\FractalNegotiatorMiddleware;
+use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ServiceProvider extends Provider
 {
@@ -24,17 +26,33 @@ class ServiceProvider extends Provider
 
     public function __construct(
         Application $app,
+        EventDispatcherInterface $eventDispatcher,
         Router $router
     )
     {
         parent::__construct($app);
 
+        $this->eventDispatcher = $eventDispatcher;
         $this->router = $router;
     }
 
     public function register()
     {
         $this->registerAPI();
+        $this->registerAutomationManager();
+
+        $this->app->bind(\Concrete\Core\Package\ItemCategory\Manager::class, \PortlandLabs\CommunityBadges\Package\ItemCategory\Manager::class);
+    }
+
+    protected function registerAutomationManager()
+    {
+        $this->app->singleton(Manager::class);
+        /** @var Manager $driverManager */
+        $driverManager = $this->app->make(Manager::class);
+
+        $this->eventDispatcher->addListener("on_start", function () use ($driverManager) {
+            $driverManager->register();
+        });
     }
 
     protected function registerAPI()
@@ -49,6 +67,8 @@ class ServiceProvider extends Provider
 
                 /** @noinspection PhpParamsInspection */
                 $groupRouter->post('/community_badges/give_award', [CommunityBadges::class, 'giveAward']);
+                $groupRouter->post('/community_badges/dismiss_grant_award', [CommunityBadges::class, 'dismissGrantAward']);
+
             });
         $this->router->buildGroup()
             ->setPrefix('/api/v1')

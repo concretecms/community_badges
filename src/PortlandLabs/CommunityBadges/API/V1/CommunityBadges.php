@@ -12,7 +12,9 @@ namespace PortlandLabs\CommunityBadges\API\V1;
 use Concrete\Core\Application\EditResponse;
 use Concrete\Core\Error\ErrorList\ErrorList;
 use Concrete\Core\Http\Request;
+use Concrete\Core\Http\Service\Json;
 use Concrete\Core\User\User;
+use League\Fractal\Resource\Collection;
 use PortlandLabs\CommunityBadges\AwardService;
 use PortlandLabs\CommunityBadges\Exceptions\GrantBadgeNotFound;
 use PortlandLabs\CommunityBadges\Exceptions\InvalidSelfAssignment;
@@ -33,6 +35,12 @@ class CommunityBadges
     {
         $this->awardService = $awardService;
         $this->request = $request;
+    }
+
+    public function getList()
+    {
+        $achievements = $this->awardService->getAllAchievements();
+        return new JsonResponse($achievements);
     }
 
     public function giveAward()

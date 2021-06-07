@@ -11,6 +11,7 @@ namespace PortlandLabs\CommunityBadges\Provider;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Foundation\Service\Provider;
+use Concrete\Core\Http\Middleware\OAuthAuthenticationMiddleware;
 use Concrete\Core\Routing\Router;
 use PortlandLabs\CommunityBadges\API\V1\CommunityBadges;
 use PortlandLabs\CommunityBadges\API\V1\Middleware\FractalNegotiatorMiddleware;
@@ -68,6 +69,18 @@ class ServiceProvider extends Provider
                 $groupRouter->post('/community_badges/give_award', [CommunityBadges::class, 'giveAward']);
                 $groupRouter->post('/community_badges/dismiss_grant_award', [CommunityBadges::class, 'dismissGrantAward']);
 
+            });
+        $this->router->buildGroup()
+            ->setPrefix('/api/v1')
+            ->addMiddleware(OAuthAuthenticationMiddleware::class)
+            ->addMiddleware(FractalNegotiatorMiddleware::class)
+            ->routes(function ($groupRouter) {
+                /**
+                 * @var $groupRouter Router
+                 */
+
+                /** @noinspection PhpParamsInspection */
+                $groupRouter->get('/community_badges', [CommunityBadges::class, 'getList']);
             });
     }
 }

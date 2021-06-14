@@ -51,29 +51,63 @@ class Controller extends BlockController
         }
     }
 
+    /**
+     * This method splits user badges by a given prefix into two arrays.
+     *
+     * @param array $allBadges
+     * @param string $searchPrefix
+     * @param array $matchedBadges
+     * @param array $otherBadges
+     */
+    private function splitBadgesByPrefix(
+        array $allBadges,
+        string $searchPrefix,
+        array &$matchedBadges = [],
+        array &$otherBadges = []
+    ): void
+    {
+        foreach ($allBadges as $curBadge) {
+            $badgeHandle = $curBadge["userBadge"]->getBadge()->getHandle();
+
+            if (substr($badgeHandle, 0, strlen($searchPrefix)) === $searchPrefix) {
+                $matchedBadges[] = $curBadge;
+            } else {
+                $otherBadges[] = $curBadge;
+            }
+        }
+    }
+
     public function view()
     {
         $grantedAwards = [];
-        $achievements = [];
-        $awards = [];
+        $badges = [];
+        $certifications = [];
 
         $currentPage = Page::getCurrentPage();
         $profile = $currentPage->getPageController()->get("profile");
         $currentUser = new User();
+        $isOwnProfile = false;
 
         if ($profile instanceof UserInfo) {
             $user = User::getByUserID($profile->getUserID());
 
             if ($currentUser->isRegistered() && $profile->getUserID() == $currentUser->getUserID()) {
+                $isOwnProfile = true;
                 $grantedAwards = $this->awardService->getAllGrantedAwardsGroupedByUser($user);
             }
 
-            $achievements = $this->awardService->getAllAchievementsByUser($user);
-            $awards = $this->awardService->getAllAwardsGroupedByUser($user);
+            // Retrieve the user badges and split them into certifications + all others
+            $this->splitBadgesByPrefix(
+                $this->awardService->getAllBadgesGroupedByUser($user),
+                "certification_test_",
+                $certifications,
+                $badges
+            );
         }
 
+        $this->set('isOwnProfile', $isOwnProfile);
         $this->set('grantedAwards', $grantedAwards);
-        $this->set('achievements', $achievements);
-        $this->set('awards', $awards);
+        $this->set('badges', $badges);
+        $this->set('certifications', $certifications);
     }
 }

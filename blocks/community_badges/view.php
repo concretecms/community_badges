@@ -221,5 +221,12 @@ $user = new User();
             </div>
         </div>
     <?php } ?>
-
 </div>
+
+<script>
+    (function($) {
+        $(function(){
+            $('.additional-content img[title]').tooltip();
+        });
+    })(jQuery);
+</script>

@@ -16,6 +16,7 @@ use Concrete\Core\Routing\Router;
 use PortlandLabs\CommunityBadges\API\V1\CommunityBadges;
 use PortlandLabs\CommunityBadges\API\V1\Middleware\FractalNegotiatorMiddleware;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;
+use PortlandLabs\CommunityBadges\User\Search\Field\Field\AchievementField;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ServiceProvider extends Provider
@@ -40,8 +41,15 @@ class ServiceProvider extends Provider
     {
         $this->registerAPI();
         $this->registerAutomationManager();
+        $this->registerSearchFields();
 
         $this->app->bind(\Concrete\Core\Package\ItemCategory\Manager::class, \PortlandLabs\CommunityBadges\Package\ItemCategory\Manager::class);
+    }
+
+    protected function registerSearchFields()
+    {
+        $manager = $this->app->make('manager/search_field/user');
+        $manager->getGroupByName('Core Properties')->addField(new AchievementField());
     }
 
     protected function registerAutomationManager()

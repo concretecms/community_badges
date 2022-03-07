@@ -92,7 +92,12 @@ class AwardService
      */
     public function getAllAchievements(): iterable
     {
-        return $this->achievementRepository->findAll();
+        $args = func_get_args();
+        if (count($args) > 0) {
+            return $this->achievementRepository->findBy(...$args);
+        } else {
+            return $this->achievementRepository->findBy([], ['name' => 'asc']);
+        }
     }
 
     public function getAwardList(): array

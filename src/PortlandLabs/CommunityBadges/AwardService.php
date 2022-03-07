@@ -96,7 +96,7 @@ class AwardService
         if (count($args) > 0) {
             return $this->achievementRepository->findBy(...$args);
         } else {
-            return $this->achievementRepository->findAll();
+            return $this->achievementRepository->findBy([], ['name' => 'asc']);
         }
     }
 

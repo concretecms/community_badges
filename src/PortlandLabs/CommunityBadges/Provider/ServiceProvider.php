@@ -48,8 +48,10 @@ class ServiceProvider extends Provider
 
     protected function registerSearchFields()
     {
-//         $manager = $this->app->make('manager/search_field/user');
-//         $manager->getGroupByName('Core Properties')->addField(new AchievementField());
+         $this->app->extend('manager/search_field/user', function($manager) {
+             $manager->getGroupByName('Core Properties')->addField(new AchievementField());
+             return $manager;
+         });
     }
 
     protected function registerAutomationManager()

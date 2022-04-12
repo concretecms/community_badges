@@ -10,6 +10,7 @@
 
 namespace PortlandLabs\CommunityBadges;
 
+use Concrete\Core\Events\EventDispatcher;
 use Concrete\Core\Mail\Service;
 use Concrete\Core\User\User;
 use Doctrine\DBAL\Connection;
@@ -35,7 +36,6 @@ use PortlandLabs\CommunityBadges\Exceptions\InvalidSelfAssignment;
 use PortlandLabs\CommunityBadges\Exceptions\MailTransportError;
 use PortlandLabs\CommunityBadges\Exceptions\NoAuthorization;
 use PortlandLabs\CommunityBadges\Exceptions\NoUserSelected;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Exception;
 use DateTime;
 
@@ -54,7 +54,7 @@ class AwardService
 
     public function __construct(
         Service $mailService,
-        EventDispatcherInterface $eventDispatcher,
+        EventDispatcher $eventDispatcher,
         EntityManagerInterface $entityManager,
         Connection $connection
     )

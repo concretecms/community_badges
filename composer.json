@@ -1,5 +1,5 @@
 {
-  "name": "concrete5/community_badges",
+  "name": "concretecms/community_badges",
   "description": "Integrate the community awards feature awards into your site.",
   "type": "concrete5-package",
   "license": "MIT",

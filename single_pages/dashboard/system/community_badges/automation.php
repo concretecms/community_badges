@@ -42,7 +42,7 @@ use PortlandLabs\CommunityBadges\Entity\AutomationRule;
                 </td>
 
                 <td>
-                    <div class="float-right">
+                    <div class="float-end">
                         <a href="<?php echo (string)Url::to("/dashboard/system/community_badges/automation/remove", $automationRule->getId()); ?>"
                            class="btn btn-danger">
                             <i class="fas fa-trash"></i> <?php echo t("Remove"); ?>

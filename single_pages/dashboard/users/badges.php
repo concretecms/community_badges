@@ -47,7 +47,7 @@ use PortlandLabs\CommunityBadges\Entity\Award;
                 </td>
 
                 <td>
-                    <div class="float-right">
+                    <div class="float-end">
                         <a href="<?php echo (string)Url::to("/dashboard/users/badges/remove", $award->getId()); ?>"
                            class="btn btn-danger">
                             <i class="fas fa-trash"></i> <?php echo t("Remove"); ?>
@@ -100,7 +100,7 @@ use PortlandLabs\CommunityBadges\Entity\Award;
                 </td>
 
                 <td>
-                    <div class="float-right">
+                    <div class="float-end">
                         <a href="<?php echo (string)Url::to("/dashboard/users/badges/remove", $achievement->getId()); ?>"
                            class="btn btn-danger">
                             <i class="fas fa-trash"></i> <?php echo t("Remove"); ?>

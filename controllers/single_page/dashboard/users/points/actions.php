@@ -93,7 +93,7 @@ class Actions extends DashboardPageController
             $this->upa->gBadgeID = (int) ($post->get('gBadgeID') ?? 0);
             $this->upa->upaIsActive = (int) ($post->get('upaIsActive') ?? 0);
 
-            if (!$this->upa->pkgID) {
+            if (!isset($this->upa->pkgID)) {
                 // i hate this activerecord crap
                 $this->upa->pkgID = 0;
             }

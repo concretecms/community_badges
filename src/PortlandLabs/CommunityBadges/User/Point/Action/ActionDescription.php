@@ -3,6 +3,9 @@ namespace PortlandLabs\CommunityBadges\User\Point\Action;
 
 class ActionDescription
 {
+
+    public $comments;
+    
     public function setComments($comments)
     {
         $this->comments = $comments;

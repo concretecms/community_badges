@@ -25,33 +25,33 @@ use Concrete\Core\Support\Facade\Url;
     ?>
 	<div class="form-group">
 	    <?= $form->label('upUser', t('User')) ?>
-        <?= $form_user_selector->quickSelect('upUser', $upUser, ['autofocus' => 'autofocus']) ?>
+        <?= $form_user_selector->quickSelect('upUser', $upUser ?? 0, ['autofocus' => 'autofocus']) ?>
 	</div>
 
 	<div class="form-group">
 	    <?= $form->label('upaID', t('Action'))?>
-        <?= $form->select('upaID', $userPointActions, $upaID, ['json-src' => $view->action('getJsonDefaultPointAction')]) ?>
+        <?= $form->select('upaID', $userPointActions, $upaID ?? 0, ['json-src' => $view->action('getJsonDefaultPointAction')]) ?>
 	</div>
 
 	<div class="form-group">
 	    <?= $form->label('upPoints', t('Points')) ?>
-        <?= $form->number('upPoints', $upPoints) ?>
+        <?= $form->number('upPoints', $upPoints ?? 0) ?>
 	</div>
 
 	<div class="form-group">
 	    <?= $form->label('upComments', t('Comments')) ?>
-		<?= $form->textarea('upComments', $upComments) ?>
+		<?= $form->textarea('upComments', $upComments ?? '') ?>
 	</div>
 
 	<div class="form-group">
 	    <?= $form->label('dtoverride', t('Override Timestamp'))?>
-		<?= $form_date_time->datetime('dtoverride', $timestamp, true); ?>
+		<?= $form_date_time->datetime('dtoverride', $timestamp ?? null, true); ?>
 	</div>
 
     <div class="ccm-dashboard-form-actions-wrapper">
         <div class="ccm-dashboard-form-actions">
-            <a href="<?= Url::to('/dashboard/users/points') ?>" class="btn btn-secondary float-left"><?=t('Back to List')?></a>
-            <button type="submit" class="btn btn-primary float-right"><?=t('Assign')?></button>
+            <a href="<?= Url::to('/dashboard/users/points') ?>" class="btn btn-secondary float-start"><?=t('Back to List')?></a>
+            <button type="submit" class="btn btn-primary float-end"><?=t('Assign')?></button>
         </div>
     </div>
 </form>

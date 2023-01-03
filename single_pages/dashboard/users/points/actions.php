@@ -19,6 +19,14 @@ use Concrete\Core\Support\Facade\Url;
  * @var int $upaIsActive
  */
 
+$upaID = $upaID ?? null;
+$showForm = $showForm ?? false;
+$upaIsActive = isset($upaIsActive) ? $upaIsActive : 1;
+$upaHasCustomClass = isset($upaHasCustomClass) ? $upaHasCustomClass : false;
+$upaName = $upaName ?? '';
+$upaHandle = $upaHandle ?? '';
+$upaDefaultPoints = $upaDefaultPoints ?? 0;
+
 if ($showForm) {
     ?>
 <form method="post" action="<?= $view->action('save') ?>" id="ccm-community-points-action">
@@ -56,8 +64,8 @@ if ($showForm) {
 
             <div class="ccm-dashboard-form-actions-wrapper">
                 <div class="ccm-dashboard-form-actions">
-                    <a href="<?= Url::to('/dashboard/users/points/actions') ?>" class="btn btn-secondary float-left"><?=t('Back to List')?></a>
-                    <button class="btn btn-primary float-right" type="submit"><?= $label ?></button>
+                    <a href="<?= Url::to('/dashboard/users/points/actions') ?>" class="btn btn-secondary float-start"><?=t('Back to List')?></a>
+                    <button class="btn btn-primary float-end" type="submit"><?= $label ?></button>
                 </div>
             </div>
         </div>

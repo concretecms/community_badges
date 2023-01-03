@@ -43,7 +43,7 @@ class Action
     {
         $db = Database::connection();
         $row = $db->getRow("SELECT * FROM UserPointActions WHERE upaID = ?", array($upaID));
-        if ($row['upaID']) {
+        if (isset($row['upaID'])) {
             $upa = static::getClass($row);
             $upa->setDataFromArray($row);
 

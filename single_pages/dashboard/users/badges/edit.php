@@ -65,7 +65,7 @@ $token = $app->make(Token::class);
 
     <div class="ccm-dashboard-form-actions-wrapper">
         <div class="ccm-dashboard-form-actions">
-            <div class="float-right">
+            <div class="float-end">
                 <button type="submit" class="btn btn-primary">
                     <i class="fa fa-save"></i> <?php echo t("Save"); ?>
                 </button>

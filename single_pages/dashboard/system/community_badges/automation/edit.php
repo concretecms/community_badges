@@ -56,11 +56,11 @@ $token = $app->make(Token::class);
     <div class="ccm-dashboard-form-actions-wrapper">
         <div class="ccm-dashboard-form-actions ">
             <a href="<?php echo (string)Url::to('/dashboard/system/community_badges/automation') ?>"
-               class="btn btn-secondary float-left">
+               class="btn btn-secondary float-start">
                 <?php echo t("Cancel") ?>
             </a>
 
-            <button type="submit" class="btn btn-primary float-right">
+            <button type="submit" class="btn btn-primary float-end">
                 <?php echo t('Edit Automation Rule') ?>
             </button>
         </div>

@@ -27,7 +27,7 @@ use Concrete\Core\Support\Facade\Url;
     </div>
 
     <div class="clearfix" style="margin-top: 30px;">
-        <input type="submit" value="<?= t('Search') ?>" class="btn btn-primary float-right"/>
+        <input type="submit" value="<?= t('Search') ?>" class="btn btn-primary float-end"/>
     </div>
 </form>
 <?php

@@ -37,14 +37,14 @@ class Action
     public function load($upaID)
     {
         $db = Database::connection();
-        $row = $db->GetRow('select * from UserPointActions where upaID = ?', array($upaID));
+        $row = $db->GetRow('select * from UserPointActions where upaID = ?', [$upaID]);
         $this->setDataFromArray($row);
     }
 
     public function delete()
     {
         $db = Database::connection();
-        $db->delete('UserPointActions', array('upaID' => $this->upaID));
+        $db->delete('UserPointActions', ['upaID' => $this->upaID]);
     }
 
     /**
@@ -55,7 +55,7 @@ class Action
     public static function getByID($upaID)
     {
         $db = Database::connection();
-        $row = $db->getRow('SELECT * FROM UserPointActions WHERE upaID = ?', array($upaID));
+        $row = $db->getRow('SELECT * FROM UserPointActions WHERE upaID = ?', [$upaID]);
         if (isset($row['upaID'])) {
             $upa = static::getClass($row);
             $upa->setDataFromArray($row);
@@ -96,8 +96,8 @@ class Action
     public static function getListByPackage($pkg)
     {
         $db = Database::connection();
-        $upaIDs = $db->GetCol('select upaID from UserPointActions where pkgID = ? order by upaName asc', array($pkg->getPackageID()));
-        $actions = array();
+        $upaIDs = $db->GetCol('select upaID from UserPointActions where pkgID = ? order by upaName asc', [$pkg->getPackageID()]);
+        $actions = [];
         foreach ($upaIDs as $upaID) {
             $action = static::getByID($upaID);
             if (is_object($action)) {
@@ -134,7 +134,7 @@ class Action
     public static function getByHandle($upaHandle)
     {
         $db = Database::connection();
-        $row = $db->getRow('SELECT * FROM UserPointActions WHERE upaHandle = ?', array($upaHandle));
+        $row = $db->getRow('SELECT * FROM UserPointActions WHERE upaHandle = ?', [$upaHandle]);
         if ($row['upaID']) {
             $upa = static::getClass($row);
             $upa->setDataFromArray($row);
@@ -206,7 +206,7 @@ class Action
 
     public function getAttributeNames()
     {
-        return array('upaID', 'upaHandle', 'upaName', 'upaDefaultPoints', 'gBadgeID', 'upaIsActive');
+        return ['upaID', 'upaHandle', 'upaName', 'upaDefaultPoints', 'gBadgeID', 'upaIsActive'];
     }
 
     /**
@@ -214,7 +214,7 @@ class Action
      */
     public function hasCustomClass()
     {
-        return (bool) $this->upaHasCustomClass;
+        return $this->upaHasCustomClass;
     }
 
     public function getPackageHandle()
@@ -342,25 +342,25 @@ class Action
         if ($this->upaID) {
             $db->update(
                 'UserPointActions',
-                array(
+                [
                     'upaHandle' => $this->upaHandle,
                     'upaName' => $this->upaName,
                     'upaDefaultPoints' => $this->upaDefaultPoints,
                     'upaHasCustomClass' => $this->upaHasCustomClass,
                     'upaIsActive' => $this->upaIsActive,
                     'gBadgeID' => $this->gBadgeID,
-                ),
-                array('upaID' => $this->upaID),
+                ],
+                ['upaID' => $this->upaID],
             );
         } else {
-            $res = $db->insert('UserPointActions', array(
+            $res = $db->insert('UserPointActions', [
                 'upaHandle' => $this->upaHandle,
                 'upaName' => $this->upaName,
                 'upaDefaultPoints' => $this->upaDefaultPoints,
                 'upaHasCustomClass' => $this->upaHasCustomClass,
                 'upaIsActive' => $this->upaIsActive,
                 'gBadgeID' => $this->gBadgeID,
-            ));
+            ]);
         }
     }
 }

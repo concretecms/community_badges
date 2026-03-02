@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PortlandLabs\CommunityBadges\Entity;
 
 use Concrete\Core\Entity\User\User;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]

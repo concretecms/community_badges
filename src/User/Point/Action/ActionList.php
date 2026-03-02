@@ -49,7 +49,7 @@ class ActionList extends DatabaseItemList
      */
     public function createPaginationObject()
     {
-        $adapter = new DoctrineDbalAdapter($this->deliverQueryObject(), function ($query) {
+        $adapter = new DoctrineDbalAdapter($this->deliverQueryObject(), static function ($query) {
             $query->resetQueryParts(['groupBy', 'orderBy'])->select('count(distinct upa.upaID)')->setMaxResults(1);
         });
 

@@ -6,7 +6,6 @@ namespace PortlandLabs\CommunityBadges\Entity;
 
 use Concrete\Core\Entity\File\File;
 use Concrete\Core\Entity\File\Version;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]

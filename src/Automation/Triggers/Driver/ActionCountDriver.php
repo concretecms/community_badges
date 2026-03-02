@@ -6,12 +6,10 @@ namespace PortlandLabs\CommunityBadges\Automation\Triggers\Driver;
 
 use Concrete\Core\Filesystem\Element;
 use Concrete\Core\User\User;
-use Concrete\Core\User\UserInfo;
 use Doctrine\DBAL\Connection;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Saver\ActionCountSaver;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Saver\SaverInterface;
 use PortlandLabs\CommunityBadges\AwardService;
-use PortlandLabs\CommunityBadges\Entity\AutomationRule;
 use PortlandLabs\CommunityBadges\Exceptions\AchievementAlreadyExists;
 use PortlandLabs\CommunityBadges\User\Point\Action\Action;
 use Symfony\Component\Console\Input\InputInterface;

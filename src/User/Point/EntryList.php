@@ -95,7 +95,7 @@ class EntryList extends DatabaseItemList
      */
     public function createPaginationObject()
     {
-        $adapter = new DoctrineDbalAdapter($this->deliverQueryObject(), function ($query) {
+        $adapter = new DoctrineDbalAdapter($this->deliverQueryObject(), static function ($query) {
             $query->resetQueryParts(['groupBy', 'orderBy'])->select('count(distinct uph.upID)')->setMaxResults(1);
         });
 

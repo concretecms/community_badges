@@ -584,9 +584,11 @@ class AwardService
         $userBadges = [];
 
         foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
-            if ($userBadge->getBadge() instanceof Achievement) {
-                $userBadges[] = $userBadge;
+            if (!$userBadge->getBadge() instanceof Achievement) {
+                continue;
             }
+
+            $userBadges[] = $userBadge;
         }
 
         return $userBadges;
@@ -600,9 +602,11 @@ class AwardService
         $userBadges = [];
 
         foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
-            if ($userBadge->getBadge() instanceof Award) {
-                $userBadges[] = $userBadge;
+            if (!$userBadge->getBadge() instanceof Award) {
+                continue;
             }
+
+            $userBadges[] = $userBadge;
         }
 
         return $userBadges;
@@ -617,23 +621,27 @@ class AwardService
         $userBadges = [];
 
         foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
-            if ($userBadge->getBadge() instanceof Award) {
-                $badgeAdded = false;
+            if (!$userBadge->getBadge() instanceof Award) {
+                continue;
+            }
 
-                foreach ($userBadges as $index => $addedBadge) {
-                    if ($addedBadge['userBadge']->getBadge()->getId() === $userBadge->getBadge()->getId()) {
-                        $userBadges[$index]['count']++;
-                        $badgeAdded = true;
-                        break;
-                    }
+            $badgeAdded = false;
+
+            foreach ($userBadges as $index => $addedBadge) {
+                if ($addedBadge['userBadge']->getBadge()->getId() !== $userBadge->getBadge()->getId()) {
+                    continue;
                 }
 
-                if (!$badgeAdded) {
-                    $userBadges[] = [
-                        'userBadge' => $userBadge,
-                        'count' => 1,
-                    ];
-                }
+                $userBadges[$index]['count']++;
+                $badgeAdded = true;
+                break;
+            }
+
+            if (!$badgeAdded) {
+                $userBadges[] = [
+                    'userBadge' => $userBadge,
+                    'count' => 1,
+                ];
             }
         }
 
@@ -652,11 +660,13 @@ class AwardService
             $badgeAdded = false;
 
             foreach ($userBadges as $index => $addedBadge) {
-                if ($addedBadge['userBadge']->getBadge()->getId() === $userBadge->getBadge()->getId()) {
-                    $userBadges[$index]['count']++;
-                    $badgeAdded = true;
-                    break;
+                if ($addedBadge['userBadge']->getBadge()->getId() !== $userBadge->getBadge()->getId()) {
+                    continue;
                 }
+
+                $userBadges[$index]['count']++;
+                $badgeAdded = true;
+                break;
             }
 
             if (!$badgeAdded) {
@@ -682,11 +692,13 @@ class AwardService
             $grantAwardAdded = false;
 
             foreach ($userGrantAwards as $index => $addedGrantAward) {
-                if ($addedGrantAward['grantedAward']->getAward()->getId() === $grantedAward->getAward()->getId()) {
-                    $userGrantAwards[$index]['count']++;
-                    $grantAwardAdded = true;
-                    break;
+                if ($addedGrantAward['grantedAward']->getAward()->getId() !== $grantedAward->getAward()->getId()) {
+                    continue;
                 }
+
+                $userGrantAwards[$index]['count']++;
+                $grantAwardAdded = true;
+                break;
             }
 
             if (!$grantAwardAdded) {

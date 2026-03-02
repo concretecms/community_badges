@@ -47,7 +47,7 @@ class ServiceProvider extends Provider
 
     protected function registerSearchFields()
     {
-        $this->app->extend('manager/search_field/user', function ($manager) {
+        $this->app->extend('manager/search_field/user', static function ($manager) {
             $manager->getGroupByName('Core Properties')->addField(new AchievementField());
             return $manager;
         });
@@ -59,7 +59,7 @@ class ServiceProvider extends Provider
         /** @var Manager $driverManager */
         $driverManager = $this->app->make(Manager::class);
 
-        $this->eventDispatcher->addListener('on_start', function () use ($driverManager) {
+        $this->eventDispatcher->addListener('on_start', static function () use ($driverManager) {
             $driverManager->register();
         });
     }
@@ -70,7 +70,7 @@ class ServiceProvider extends Provider
             ->buildGroup()
             ->setPrefix('/api/v1')
             ->addMiddleware(FractalNegotiatorMiddleware::class)
-            ->routes(function ($groupRouter) {
+            ->routes(static function ($groupRouter) {
                 /**
                  * @var $groupRouter Router
                  */
@@ -87,7 +87,7 @@ class ServiceProvider extends Provider
             ->setPrefix('/api/v1')
             ->addMiddleware(OAuthAuthenticationMiddleware::class)
             ->addMiddleware(FractalNegotiatorMiddleware::class)
-            ->routes(function ($groupRouter) {
+            ->routes(static function ($groupRouter) {
                 /**
                  * @var $groupRouter Router
                  */

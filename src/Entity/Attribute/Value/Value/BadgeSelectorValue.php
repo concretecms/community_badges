@@ -25,6 +25,6 @@ class BadgeSelectorValue extends AbstractValue implements \Stringable
     #[\Override]
     public function __toString(): string
     {
-        return $this->badge?->name ?? '';
+        return $this->badge->name ?? '';
     }
 }

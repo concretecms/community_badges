@@ -26,7 +26,7 @@ class Entry
     public function load($upID)
     {
         $db = Loader::db();
-        $row = $db->GetRow('select * from UserPointHistory where upID = ?', array($upID));
+        $row = $db->GetRow('select * from UserPointHistory where upID = ?', [$upID]);
         if (is_array($row) && $row['upID']) {
             $this->setDataFromArray($row);
         }
@@ -63,25 +63,25 @@ class Entry
         if ($this->upID) {
             $db->update(
                 'UserPointHistory',
-                array(
+                [
                     'upID' => $this->upID,
                     'upuID' => $this->upuID,
                     'upaID' => $this->upaID,
                     'object' => $this->object,
                     'upPoints' => $this->upPoints,
                     'timestamp' => $this->timestamp->format('Y-m-d H:i:s'),
-                ),
-                array('upID' => $this->upID),
+                ],
+                ['upID' => $this->upID],
             );
         } else {
-            $db->insert('UserPointHistory', array(
+            $db->insert('UserPointHistory', [
                 'upID' => $this->upID,
                 'upuID' => $this->upuID,
                 'object' => $this->object,
                 'upaID' => $this->upaID,
                 'upPoints' => $this->upPoints,
                 'timestamp' => $this->timestamp->format('Y-m-d H:i:s'),
-            ));
+            ]);
         }
 
         $event = new AfterAssignCommunityPoints();
@@ -92,7 +92,7 @@ class Entry
     public function delete()
     {
         $db = Loader::db();
-        $db->delete('UserPointHistory', array('upID' => $this->upID));
+        $db->delete('UserPointHistory', ['upID' => $this->upID]);
     }
 
     public function getUserPointEntryID()
@@ -152,17 +152,13 @@ class Entry
 
     public function getUserPointEntryUserObject()
     {
-        $ui = UserInfo::getByID($this->upuID);
-
-        return $ui;
+        return UserInfo::getByID($this->upuID);
     }
 
     public static function getTotal($ui)
     {
         $db = Loader::db();
-        $cnt = $db->GetOne('select sum(upPoints) as total from UserPointHistory where upuID = ?', array($ui->getUserID()));
-
-        return $cnt;
+        return $db->GetOne('select sum(upPoints) as total from UserPointHistory where upuID = ?', array($ui->getUserID()));
     }
 
     public static function createFromArray(array $data): self

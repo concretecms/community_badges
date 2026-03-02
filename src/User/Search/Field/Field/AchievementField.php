@@ -4,7 +4,6 @@ namespace PortlandLabs\CommunityBadges\User\Search\Field\Field;
 
 use Concrete\Core\Search\Field\AbstractField;
 use Concrete\Core\Search\ItemList\ItemList;
-use Concrete\Core\User\Group\GroupList;
 use Concrete\Core\User\UserList;
 use PortlandLabs\CommunityBadges\AwardService;
 

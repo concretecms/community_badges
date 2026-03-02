@@ -14,7 +14,7 @@ defined('C5_EXECUTE') or die('Access denied');
 /** @var array $driverList */
 ?>
 <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerDropdownMenuButton" data-toggle="dropdown"
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="triggerDropdownMenuButton" data-toggle="dropdown" data-bs-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
         <?php echo t("Add Automation Rule"); ?>
     </button>

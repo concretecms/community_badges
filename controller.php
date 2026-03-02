@@ -10,10 +10,10 @@
 namespace Concrete\Package\CommunityBadges;
 
 use Concrete\Core\Application\UserInterface\Dashboard\Navigation\NavigationCache;
-use Concrete\Core\Database\EntityManager\Provider\ProviderAggregateInterface;
-use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
+use Concrete\Core\Database\EntityManager\Driver\Driver;use Concrete\Core\Database\EntityManager\Provider\ProviderAggregateInterface;
+use Concrete\Core\Database\EntityManager\Provider\ProviderInterface;use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
 use Concrete\Core\Package\Package;
-use PortlandLabs\CommunityBadges\Console\Command\ProcessAutomatedRules;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;use PortlandLabs\CommunityBadges\Console\Command\ProcessAutomatedRules;
 use PortlandLabs\CommunityBadges\Provider\ServiceProvider;
 
 class Controller extends Package implements ProviderAggregateInterface
@@ -33,13 +33,6 @@ class Controller extends Package implements ProviderAggregateInterface
     public function getPackageName()
     {
         return t("Community Badges");
-    }
-
-    public function getEntityManagerProvider()
-    {
-        return new StandardPackageProvider($this->app, $this, [
-            'src/PortlandLabs/CommunityBadges/Entity' => 'PortlandLabs\CommunityBadges\Entity'
-        ]);
     }
 
     public function on_start()
@@ -72,4 +65,24 @@ class Controller extends Package implements ProviderAggregateInterface
         $navigationCache->clear();
     }
 
+    #[\Override]
+    public function getEntityManagerProvider(): ProviderInterface
+    {
+        return new class($this->app, $this, ['src/Entity' => "\PortlandLabs\CommunityBadges\Entity"]) extends
+            StandardPackageProvider {
+            #[\Override]
+            public function getDrivers(): array
+            {
+                $drivers = [];
+                $pkgPath = $this->pkg->getPackagePath();
+
+                foreach ($this->locations as $path => $prefix) {
+                    $prefix = trim((string) $prefix, '\\');
+                    $drivers[] = new Driver($prefix, new AttributeDriver([$pkgPath . '/' . $path]));
+                }
+
+                return $drivers;
+            }
+        };
+    }
 }

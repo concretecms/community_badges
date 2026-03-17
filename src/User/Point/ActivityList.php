@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PortlandLabs\CommunityBadges\User\Point;
 
 use Concrete\Core\Legacy\DatabaseItemList;
@@ -17,16 +19,25 @@ class ActivityList extends DatabaseItemList
         $this->sortBy('total', 'desc');
     }
 
+    /**
+     * @param string $period
+     * @return void
+     */
     public function filterByTimePeriod($period)
     {
-        $ts = date('Y-m-d H:i:s', strtotime($period));
+        $ts = \DateTimeImmutable::createFromTimestamp((int) strtotime($period))->format('Y-m-d H:i:s');
         $this->filter('timestamp', $ts, '>=');
     }
 
+    /**
+     * @param string $periodFrom
+     * @param string $periodTo
+     * @return void
+     */
     public function filterByTimePeriodRange($periodFrom, $periodTo)
     {
-        $ts1 = date('Y-m-d H:i:s', strtotime($periodFrom));
-        $ts2 = date('Y-m-d H:i:s', strtotime($periodTo));
+        $ts1 = \DateTimeImmutable::createFromTimestamp((int) strtotime($periodFrom))->format('Y-m-d H:i:s');
+        $ts2 = \DateTimeImmutable::createFromTimestamp((int) strtotime($periodTo))->format('Y-m-d H:i:s');
         $this->filter('timestamp', $ts1, '>=');
         $this->filter('timestamp', $ts2, '<=');
     }

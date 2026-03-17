@@ -1,0 +1,163 @@
+variant = "loose"
+
+[[issues]]
+file = "src/API/V1/CommunityBadges.php"
+code = "block-statement"
+message = "`else` statement should use a block body."
+count = 1
+
+[[issues]]
+file = "src/API/V1/CommunityBadges.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 3
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/AccountAgeDriver.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/ActionCountDriver.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/CommunityPointsDriver.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/EnterGroupDriver.php"
+code = "identity-comparison"
+message = "Use identity comparison `===` instead of equality comparison `==`."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/EnterGroupDriver.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/EnterGroupDriver.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/LeaveGroupDriver.php"
+code = "identity-comparison"
+message = "Use identity comparison `===` instead of equality comparison `==`."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/LeaveGroupDriver.php"
+code = "no-empty-catch-clause"
+message = "Do not use empty `catch` blocks."
+count = 1
+
+[[issues]]
+file = "src/Automation/Triggers/Driver/LeaveGroupDriver.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 1
+
+[[issues]]
+file = "src/Entity/AutomationRule.php"
+code = "optional-param-order"
+message = "Optional parameter(s) `$driverHandle`, `$configuration` defined before required parameter `$badge`."
+count = 1
+
+[[issues]]
+file = "src/Entity/Point/Action.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/Exceptions/AwardedAwardNotFound.php"
+code = "file-name"
+message = "Class `AwardedBadgeNotFound` should be in a file named `AwardedBadgeNotFound.php`, found `AwardedAwardNotFound.php`."
+count = 1
+
+[[issues]]
+file = "src/Exceptions/GrantAwardNotFound.php"
+code = "file-name"
+message = "Class `GrantBadgeNotFound` should be in a file named `GrantBadgeNotFound.php`, found `GrantAwardNotFound.php`."
+count = 1
+
+[[issues]]
+file = "src/Provider/ServiceProvider.php"
+code = "no-redundant-use"
+message = "Unused import: `Application`."
+count = 1
+
+[[issues]]
+file = "src/Provider/ServiceProvider.php"
+code = "no-redundant-use"
+message = "Unused import: `EventDispatcherInterface`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "cyclomatic-complexity"
+message = "Class has high complexity."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "excessive-parameter-list"
+message = "Parameter list is too long."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "identity-comparison"
+message = "Use identity comparison `===` instead of equality comparison `==`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "kan-defect"
+message = "Class has a high kan defect score (1.8000000000000003)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 4
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "too-many-methods"
+message = "Class has too many methods."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "no-else-clause"
+message = "Avoid `else` clauses."
+count = 1
+
+[[issues]]
+file = "src/User/Search/Field/Field/AchievementField.php"
+code = "identity-comparison"
+message = "Use identity comparison `===` instead of equality comparison `==`."
+count = 1
+
+[[issues]]
+file = "src/User/Search/Field/Field/AchievementField.php"
+code = "no-isset"
+message = "Use of the `isset` construct."
+count = 2

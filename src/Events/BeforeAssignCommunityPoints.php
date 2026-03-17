@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -9,29 +11,17 @@
 
 namespace PortlandLabs\CommunityBadges\Events;
 
-use PortlandLabs\CommunityBadges\User\Point\Entry;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use PortlandLabs\CommunityBadges\Entity\Point\TimelineEntry;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class BeforeAssignCommunityPoints extends GenericEvent
+class BeforeAssignCommunityPoints extends Event
 {
-    /** @var Entry */
-    protected $entry;
+    public function __construct(
+        public readonly TimelineEntry $entry,
+    ) {}
 
-    /**
-     * @return Entry
-     */
-    public function getEntry(): Entry
+    public function getEntry(): TimelineEntry
     {
         return $this->entry;
-    }
-
-    /**
-     * @param Entry $entry
-     * @return BeforeAssignCommunityPoints
-     */
-    public function setEntry(Entry $entry): BeforeAssignCommunityPoints
-    {
-        $this->entry = $entry;
-        return $this;
     }
 }

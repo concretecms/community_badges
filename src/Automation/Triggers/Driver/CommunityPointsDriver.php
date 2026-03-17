@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -28,11 +30,12 @@ class CommunityPointsDriver extends AbstractDriver
 {
     public function getConfigurationFormElement(): Element
     {
-        return new Element('dashboard/automation/triggers/community_points', 'community_badges');
+        return $this->getElement('dashboard/automation/triggers/community_points');
     }
 
     public function getSaver(): SaverInterface
     {
+        /** @var CommunityPointsSaver */
         return $this->app->make(CommunityPointsSaver::class);
     }
 
@@ -50,34 +53,39 @@ class CommunityPointsDriver extends AbstractDriver
         $awardService = $this->app->make(AwardService::class);
 
         foreach ($this->getAutomatedRulesByDriverHandle('community_points') as $automationRule) {
-            $ruleConfig = $automationRule->getConfiguration();
+            $ruleConfig = $automationRule->configuration;
 
             if (is_array($ruleConfig) && isset($ruleConfig['communityPoints'])) {
-                $communityPoints = $ruleConfig['communityPoints'];
+                $communityPoints = (int) $ruleConfig['communityPoints'];
 
                 try {
                     /** @noinspection SqlDialectInspection */
                     /** @noinspection SqlNoDataSourceInspection */
-                    $rows = $db->fetchAllAssociative(sprintf('SELECT s.*
-FROM (
-  SELECT u.uID, SUM(p.upPoints) AS points_sum
-  FROM Users u JOIN UserPointHistory p ON (u.uID = p.upuID)
-  GROUP BY u.uID) AS s
-WHERE s.points_sum >= %s
-ORDER BY s.uID
-LIMIT 1;', (int) $communityPoints));
+                    $rows = $db->fetchAllAssociative(sprintf(<<<SQL
+                        SELECT s.*
+                        FROM (
+                          SELECT u.uID, SUM(p.upPoints) AS points_sum
+                          FROM Users u JOIN UserPointHistory p ON (u.uID = p.upuID)
+                          GROUP BY u.uID) AS s
+                        WHERE s.points_sum >= %s
+                        ORDER BY s.uID
+                        LIMIT 1;
+                        SQL, (int) $communityPoints));
 
                     /** @noinspection DuplicatedCode */
                     foreach ($rows as $row) {
-                        $uID = $row['uID'];
+                        $uID = (int) $row['uID'];
 
-                        if (!$this->isItemProcessed($automationRule, $uID)) {
+                        if (!$this->isItemProcessed($automationRule, (string) $uID)) {
                             $user = User::getByUserID($uID);
-                            $awardService->giveBadge($automationRule->getBadge(), $user);
+                            if (!$user instanceof User) {
+                                continue;
+                            }
+                            $awardService->giveBadge($automationRule->badge, $user);
 
                             $io->success(sprintf(
                                 'Awarded badge %s for users %s.',
-                                $automationRule->getBadge()->getName(),
+                                $automationRule->badge->name,
                                 $user->getUserName(),
                             ));
 

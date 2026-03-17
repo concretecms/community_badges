@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Concrete\Package\CommunityBadges\Controller\Element\Dashboard\Automation\Triggers;
 
 use PortlandLabs\CommunityBadges\Automation\Triggers\AutomationRuleElementController;
-use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;use PortlandLabs\CommunityBadges\User\Point\Action\Action;
+use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionService;
+use PortlandLabs\CommunityBadges\User\Point\Action\Action;
 
 class ActionCount extends AutomationRuleElementController
 {
@@ -13,8 +15,10 @@ class ActionCount extends AutomationRuleElementController
     /** @var Manager */
     protected $manager;
 
-    public function __construct(Manager $manager)
-    {
+    public function __construct(
+        Manager $manager,
+        private ActionService $actionService,
+    ) {
         parent::__construct();
         $this->manager = $manager;
     }
@@ -26,15 +30,17 @@ class ActionCount extends AutomationRuleElementController
 
     public function view(): void
     {
-        $configuration = $this->getAutomationRule()->getConfiguration();
+        $configuration = $this->getAutomationRule()?->getConfiguration();
 
         $actions = [];
-        foreach (Action::getList() as $action) {
-            $actions[$action->upaID] = $action->upaName;
+
+        foreach ($this->actionService->getRepository()->findAll() as $action) {
+            $actions[$action->id] = $action->name;
         }
+
         asort($actions);
         $this->set('actions', $actions);
-        $this->set('action', $configuration["action"] ?? null);
+        $this->set('action', $configuration['action'] ?? null);
         $this->set('minCount', $configuration['minCount'] ?? 1);
     }
 }

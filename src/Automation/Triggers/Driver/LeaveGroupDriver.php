@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -22,11 +24,12 @@ class LeaveGroupDriver extends AbstractDriver
 {
     public function getConfigurationFormElement(): Element
     {
-        return new Element('dashboard/automation/triggers/leave_group', 'community_badges');
+        return $this->getElement('dashboard/automation/triggers/leave_group');
     }
 
     public function getSaver(): SaverInterface
     {
+        /** @var LeaveGroupSaver */
         return $this->app->make(LeaveGroupSaver::class);
     }
 
@@ -42,20 +45,21 @@ class LeaveGroupDriver extends AbstractDriver
         /** @var AwardService $awardService */
         $awardService = $this->app->make(AwardService::class);
 
-        $eventDispatcher->addListener('on_user_exit_group', function ($event) use ($awardService) {
-            /** @var UserGroup $event */
+        $eventDispatcher->addListener('on_user_exit_group', function (UserGroup $event) use ($awardService) {
+            /** @var mixed $group */
             $group = $event->getGroupObject();
+            /** @var \Concrete\Core\User\User $user */
             $user = $event->getUserObject();
 
             if ($group instanceof Group) {
                 foreach ($this->getAutomatedRulesByDriverHandle('leave_group') as $automationRule) {
-                    $ruleConfig = $automationRule->getConfiguration();
+                    $ruleConfig = $automationRule->configuration;
                     if (is_array($ruleConfig) && isset($ruleConfig['groupId'])) {
                         $groupId = (int) $ruleConfig['groupId'];
 
-                        if ($groupId == $group->getGroupID()) {
+                        if ($groupId === $group->getGroupID()) {
                             try {
-                                $awardService->giveBadge($automationRule->getBadge(), $user);
+                                $awardService->giveBadge($automationRule->badge, $user);
                             } catch (Exception $exception) {
                                 // Ignore all kind of exceptions.
                             }

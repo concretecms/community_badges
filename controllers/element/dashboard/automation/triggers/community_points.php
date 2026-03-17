@@ -27,9 +27,9 @@ class CommunityPoints extends AutomationRuleElementController
 
     public function view()
     {
-        $configuration = $this->getAutomationRule()->getConfiguration();
-        if (is_array($configuration) && isset($configuration["communityPoints"])) {
-            $this->set("communityPoints", $configuration["communityPoints"]);
+        $configuration = $this->getAutomationRule()?->getConfiguration();
+        if (is_array($configuration) && isset($configuration['communityPoints'])) {
+            $this->set('communityPoints', $configuration['communityPoints']);
         }
     }
 }

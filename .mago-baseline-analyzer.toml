@@ -1,0 +1,337 @@
+variant = "loose"
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "ambiguous-object-method-access"
+message = "Cannot statically verify method call on a generic `object` type."
+count = 4
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "deprecated-class"
+message = 'Class `PortlandLabs\CommunityBadges\User\Point\Action\Action` is deprecated and should no longer be used.'
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "deprecated-class"
+message = 'Class `PortlandLabs\CommunityBadges\User\Point\Entry` is deprecated and should no longer be used.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `PortlandLabs\CommunityBadges\User\Point\Action\Action::getuserpointactionbadgegroupid`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `PortlandLabs\CommunityBadges\User\Point\Action\Action::getuserpointactionbadgegroupobject`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `concrete\core\user\group\group::getbyid`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `concrete\core\user\userinfo::getbyid`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "invalid-argument"
+message = 'Invalid argument type for argument #1 of `concrete\core\user\group\group::getbyid`: expected `string`, but found `int`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "invalid-iterator"
+message = "The expression provided to `foreach` is not iterable. It resolved to type `mixed`, which is not iterable."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "invalid-property-assignment-value"
+message = "Invalid type for property `$upaHasCustomClass`: expected `bool`, but got `int(0)`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "invalid-property-assignment-value"
+message = "Invalid type for property `$upaHasCustomClass`: expected `bool`, but got `int(1)`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "invalid-property-assignment-value"
+message = "Invalid type for property `$upaIsActive`: expected `bool`, but got `int(0)`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "less-specific-nested-return-statement"
+message = '''Returned type `array{}|non-empty-list<mixed>` is less specific than the declared return type `array<array-key, PortlandLabs\CommunityBadges\User\Point\Action\Action>` for function `portlandlabs\communitybadges\user\point\action\action::getlist` due to nested 'mixed'.'''
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `PortlandLabs\CommunityBadges\User\Point\Action\Action::setdatafromarray`: expected `array<array-key, mixed>`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `concrete\core\package\packagelist::gethandle`: expected `int|null`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-argument"
+message = 'Invalid argument type for argument #1 of `concrete\core\user\user::getbyuserid`: expected `int`, but found `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-array-access"
+message = "Unsafe array access on type `mixed`."
+count = 4
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 27
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 18
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-operand"
+message = "Invalid left operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-operand"
+message = "Invalid middle operand: type `mixed` cannot be reliably used in string concatenation."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-operand"
+message = "Left operand in `<=` comparison has `mixed` type."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$gBadgeID` (int)."
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$pkgID` (int)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$upaDefaultPoints` (int)."
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$upaHandle` (string)."
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$upaHasCustomClass` (bool)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$upaID` (int)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$upaIsActive` (bool)."
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `mixed` is being assigned to property `$$upaName` (string)."
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-property-type-coercion"
+message = "A value with a less specific type `nonnull` is being assigned to property `$$timestamp` (DateTimeImmutable)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `portlandlabs\communitybadges\user\point\action\action::getbyhandle`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "mixed-return-statement"
+message = 'Could not infer a precise return type for function `portlandlabs\communitybadges\user\point\action\action::getbyid`. Saw type `mixed`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "non-documented-method"
+message = 'Ambiguous method call to `connection` on class `Concrete\Core\Support\Facade\Database`.'
+count = 7
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "non-existent-method"
+message = "Method `get` does not exist on type `Environment`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "non-existent-method"
+message = "Method `make` does not exist on type `Core`."
+count = 5
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "redundant-condition"
+message = "This condition (type `true`) will always evaluate to true."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "redundant-logical-operation"
+message = "Redundant `&&` operation: left operand is always truthy and right operand is evaluated."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "redundant-type-comparison"
+message = "Redundant type assertion: `$data` of type `array<array-key, mixed>` is always not `array<array-key, mixed>`."
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/Action.php"
+code = "unsafe-instantiation"
+message = 'Unsafe `new static()`: constructor of `PortlandLabs\CommunityBadges\User\Point\Action\Action` is not final and its signature might change in child classes, potentially leading to runtime errors.'
+count = 2
+
+[[issues]]
+file = "src/User/Point/Action/ActionList.php"
+code = "deprecated-class"
+message = 'Class `Pagerfanta\Adapter\DoctrineDbalAdapter` is deprecated and should no longer be used.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/ActionList.php"
+code = "invalid-method-access"
+message = "Attempting to access a method on a non-object type (`int`)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Action/ActionList.php"
+code = "invalid-method-access"
+message = "Attempting to access a method on a non-object type (`string`)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "deprecated-class"
+message = 'Class `PortlandLabs\CommunityBadges\User\Point\Entry` is deprecated and should no longer be used.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `concrete\core\user\userinfo::getbyid`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "invalid-property-assignment-value"
+message = "Invalid type for property `$timestamp`: expected `DateTimeImmutable`, but got `DateTimeImmutable|false`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "mixed-argument"
+message = "Invalid argument type for argument #2 of `datetimeimmutable::createfromformat`: expected `string`, but found `mixed`."
+count = 1
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "mixed-assignment"
+message = "Assigning `mixed` type to a variable may lead to unexpected behavior."
+count = 6
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "mixed-method-access"
+message = "Attempting to access a method on a non-object type (`mixed`)."
+count = 7
+
+[[issues]]
+file = "src/User/Point/Entry.php"
+code = "mixed-operand"
+message = "Right operand in `&&` operation has `mixed` type."
+count = 1
+
+[[issues]]
+file = "src/User/Point/EntryList.php"
+code = "deprecated-class"
+message = 'Class `Pagerfanta\Adapter\DoctrineDbalAdapter` is deprecated and should no longer be used.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/EntryList.php"
+code = "deprecated-class"
+message = 'Class `PortlandLabs\CommunityBadges\User\Point\Entry` is deprecated and should no longer be used.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/EntryList.php"
+code = "deprecated-method"
+message = 'Call to deprecated method: `Doctrine\DBAL\ForwardCompatibility\Result::fetchcolumn`.'
+count = 1
+
+[[issues]]
+file = "src/User/Point/EntryList.php"
+code = "invalid-method-access"
+message = "Attempting to access a method on a non-object type (`int`)."
+count = 1
+
+[[issues]]
+file = "src/User/Point/EntryList.php"
+code = "invalid-method-access"
+message = "Attempting to access a method on a non-object type (`string`)."
+count = 1
+
+[[issues]]
+file = "src/User/Search/Field/Field/AchievementField.php"
+code = "non-existent-method"
+message = 'Method `getqueryobject` does not exist on type `Concrete\Core\Search\ItemList\ItemList`.'
+count = 1

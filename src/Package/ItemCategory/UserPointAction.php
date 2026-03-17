@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PortlandLabs\CommunityBadges\Package\ItemCategory;
 
 use Concrete\Core\Entity\Package;
@@ -14,16 +16,11 @@ class UserPointAction extends AbstractCategory
     }
 
     /**
-     * @param Action $action
-     * @return mixed
+     * @param Action $mixed
+     * @return string
      */
-    public function getItemName($action)
+    public function getItemName($mixed)
     {
-        return $action->getUserPointActionName();
-    }
-
-    public function getPackageItems(Package $package)
-    {
-        return Action::getListByPackage($package);
+        return $mixed->getUserPointActionName();
     }
 }

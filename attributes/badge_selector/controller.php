@@ -9,15 +9,7 @@
 
 namespace Concrete\Package\CommunityBadges\Attribute\BadgeSelector;
 
-use Concrete\Core\Support\Facade\Application;
-use PortlandLabs\CommunityBadges\AwardService;
-use PortlandLabs\CommunityBadges\Entity\Attribute\Key\Settings\BadgeSelectorSettings;
-use PortlandLabs\CommunityBadges\Entity\Attribute\Value\Value\BadgeSelectorValue;
-
-use Concrete\Core\Attribute\DefaultController;
-use Concrete\Core\Attribute\FontAwesomeIconFormatter;
-use PortlandLabs\CommunityBadges\Entity\Badge;
-use PortlandLabs\CommunityBadges\Exceptions\BadgeNotFound;
+use Concrete\Core\Attribute\DefaultController;use Concrete\Core\Attribute\FontAwesomeIconFormatter;use Concrete\Core\Support\Facade\Application;use PortlandLabs\CommunityBadges\AwardService;use PortlandLabs\CommunityBadges\Entity\Attribute\Key\Settings\BadgeSelectorSettings;use PortlandLabs\CommunityBadges\Entity\Badge;use PortlandLabs\CommunityBadges\EntityLegacy\Attribute\Value\Value\BadgeSelectorValue;use PortlandLabs\CommunityBadges\Exceptions\BadgeNotFound;
 
 class Controller extends DefaultController
 {

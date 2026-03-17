@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -11,6 +13,7 @@ namespace PortlandLabs\CommunityBadges\Automation\Triggers\Driver;
 
 use Concrete\Core\Application\ApplicationAwareInterface;
 use Concrete\Core\Application\ApplicationAwareTrait;
+use Concrete\Core\Filesystem\Element;
 use Doctrine\ORM\EntityManagerInterface;
 use PortlandLabs\CommunityBadges\Entity\AutomationRule;
 use PortlandLabs\CommunityBadges\Entity\AutomationRuleProcessedItem;
@@ -36,9 +39,7 @@ abstract class AbstractDriver implements DriverInterface, ApplicationAwareInterf
     {
         /** @var EntityManagerInterface $entityManager */
         $entityManager = $this->app->make(EntityManagerInterface::class);
-        $automationRuleProcessedItem = new AutomationRuleProcessedItem();
-        $automationRuleProcessedItem->setAutomationRule($automationRule);
-        $automationRuleProcessedItem->setKey($key);
+        $automationRuleProcessedItem = new AutomationRuleProcessedItem($automationRule, $key);
         $entityManager->persist($automationRuleProcessedItem);
         $entityManager->flush();
     }
@@ -64,5 +65,11 @@ abstract class AbstractDriver implements DriverInterface, ApplicationAwareInterf
     public function register(): void
     {
         return;
+    }
+
+    protected function getElement(string $name, string $pkgName = 'community_badges'): Element
+    {
+        /** @mago-expect analysis:too-many-arguments */
+        return new Element($name, $pkgName);
     }
 }

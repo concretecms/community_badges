@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpUnused */
+
 /** @noinspection PhpInconsistentReturnPointsInspection */
 
 /**
@@ -43,47 +44,50 @@ class Give extends DashboardPageController
     }
 
     /** @noinspection PhpUnused */
-    public function given(
-        $userBadgeId = null
-    )
+    public function given($userBadgeId = null)
     {
         try {
-            $userBadge = $this->awardService->getUserBadgeById((int)$userBadgeId);
+            $userBadge = $this->awardService->getUserBadgeById((int) $userBadgeId);
             $this->set('badgeList', $this->awardService->getBadgeList());
-            $this->set("success", t("The badge was successfully assigned to the user %s.", $userBadge->getUser()->getUserName()));
+            $this->set('success', t(
+                'The badge was successfully assigned to the user %s.',
+                $userBadge->getUser()->getUserName(),
+            ));
         } catch (AwardedBadgeNotFound $e) {
-            return $this->responseFactory->notFound(t("Awarded Award not found."));
+            return $this->responseFactory->notFound(t('Awarded Award not found.'));
         }
     }
 
-
     public function view()
     {
-        if ($this->request->getMethod() === "POST") {
-            $badgeId = $this->request->request->getInt("badge", 0);
-            $userId = $this->request->request->getInt("user", 0);
+        if ($this->request->getMethod() === 'POST') {
+            $badgeId = $this->request->request->getInt('badge', 0);
+            $userId = $this->request->request->getInt('user', 0);
 
-            if ($this->token->validate("give_award")) {
+            if ($this->token->validate('give_award')) {
                 $user = User::getByUserID($userId);
 
                 try {
-                    $badge = $this->awardService->getBadgeById((int)$badgeId);
+                    $badge = $this->awardService->getBadgeById((int) $badgeId);
 
                     try {
                         $userBadge = $this->awardService->giveBadge($badge, $user);
 
-                        return $this->responseFactory->redirect((string)Url::to("/dashboard/users/badges/give/given", $userBadge->getId()), Response::HTTP_TEMPORARY_REDIRECT);
+                        return $this->responseFactory->redirect(
+                            (string) Url::to('/dashboard/users/badges/give/given', $userBadge->getId()),
+                            Response::HTTP_TEMPORARY_REDIRECT,
+                        );
                     } catch (MailTransportError $e) {
-                        $this->error->add(t("There was an error while sending the mail notification."));
+                        $this->error->add(t('There was an error while sending the mail notification.'));
                     } catch (NoUserSelected $e) {
-                        $this->error->add(t("You need to select a user."));
+                        $this->error->add(t('You need to select a user.'));
                     } catch (InvalidBadgeType $e) {
-                        $this->error->add(t("Invalid badge type."));
+                        $this->error->add(t('Invalid badge type.'));
                     } catch (AchievementAlreadyExists $e) {
-                        $this->error->add(t("The user has already received the selected achievement."));
+                        $this->error->add(t('The user has already received the selected achievement.'));
                     }
                 } catch (BadgeNotFound $e) {
-                    $this->error->add(t("You need to select a valid award."));
+                    $this->error->add(t('You need to select a valid award.'));
                 }
             } else {
                 $this->error->add($this->token->getErrorMessage());

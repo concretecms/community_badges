@@ -9,11 +9,11 @@
 
 defined('C5_EXECUTE') or die('Access denied');
 
+use Concrete\Core\Form\Service\Form;
+use Concrete\Core\Support\Facade\Application;
 use Concrete\Core\Support\Facade\Url;
 use Concrete\Core\Validation\CSRF\Token;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\DriverInterface;
-use Concrete\Core\Form\Service\Form;
-use Concrete\Core\Support\Facade\Application;
 use PortlandLabs\CommunityBadges\Entity\AutomationRule;
 use PortlandLabs\CommunityBadges\Entity\Badge;
 
@@ -30,34 +30,43 @@ $token = $app->make(Token::class);
 ?>
 
 <form action="#" method="post">
-    <?php echo $token->output("save_automation_rule"); ?>
+    <?php echo $token->output('save_automation_rule'); ?>
 
     <div class="form-group">
-        <?php echo $form->label("driverName", t("Trigger")); ?>
-        <?php echo $form->text("driverName", $driver->getName(), ["readonly" => "readonly"]); ?>
+        <?php echo $form->label('driverName', t('Trigger')); ?>
+        <?php echo $form->text('driverName', $driver->getName(), ['readonly' => 'readonly']); ?>
     </div>
 
     <div class="form-group">
-        <?php echo $form->label("name", t("Name")); ?>
-        <?php echo $form->text("name", $automationRule->getName()); ?>
+        <?php echo $form->label('name', t('Name')); ?>
+        <?php echo $form->text('name', $automationRule?->getName()); ?>
     </div>
 
     <?php
+
     $element = $driver->getConfigurationFormElement();
-    $element->getElementController()->setAutomationRule($automationRule);
+    if ($automationRule) {
+        $element->getElementController()->setAutomationRule($automationRule);
+    }
     $element->render();
     ?>
 
     <div class="form-group">
-        <?php echo $form->label("badgeId", t("Badge")); ?>
-        <?php echo $form->select("badgeId", $badgeList, $automationRule->getBadge() instanceof Badge ? $automationRule->getBadge()->getId() : null); ?>
+        <?php echo $form->label('badgeId', t('Badge')); ?>
+        <?php echo
+            $form->select(
+                'badgeId',
+                $badgeList,
+                $automationRule?->getBadge() instanceof Badge ? $automationRule?->getBadge()->getId() : null,
+            )
+        ; ?>
     </div>
 
     <div class="ccm-dashboard-form-actions-wrapper">
         <div class="ccm-dashboard-form-actions ">
-            <a href="<?php echo (string)Url::to('/dashboard/system/community_badges/automation') ?>"
+            <a href="<?php echo (string) Url::to('/dashboard/system/community_badges/automation') ?>"
                class="btn btn-secondary float-start">
-                <?php echo t("Cancel") ?>
+                <?php echo t('Cancel') ?>
             </a>
 
             <button type="submit" class="btn btn-primary float-end">

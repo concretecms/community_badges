@@ -10,6 +10,7 @@ use Doctrine\DBAL\Connection;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Saver\ActionCountSaver;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Saver\SaverInterface;
 use PortlandLabs\CommunityBadges\AwardService;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionService;
 use PortlandLabs\CommunityBadges\Exceptions\AchievementAlreadyExists;
 use PortlandLabs\CommunityBadges\User\Point\Action\Action;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,12 +20,13 @@ final class ActionCountDriver extends AbstractDriver
 {
     public function __construct(
         private AwardService $awardService,
+        private ActionService $actionService,
         private Connection $db,
     ) {}
 
     public function getConfigurationFormElement(): Element
     {
-        return new Element('dashboard/automation/triggers/action_count', 'community_badges');
+        return $this->getElement('dashboard/automation/triggers/action_count');
     }
 
     public function getSaver(): SaverInterface
@@ -41,28 +43,28 @@ final class ActionCountDriver extends AbstractDriver
     public function processManually(InputInterface $input, OutputInterface $output): void
     {
         foreach ($this->getAutomatedRulesByDriverHandle('action_count') as $automationRule) {
-            $ruleConfig = $automationRule->getConfiguration();
-
+            $ruleConfig = $automationRule->configuration;
             $action = (int) ($ruleConfig['action'] ?? 0);
             $minCount = max((int) ($ruleConfig['minCount'] ?? 1), 1);
-            $actionObject = Action::getByID($action);
+            $actionObject = $action > 0 ? $this->actionService->getRepository()->find($action) : null;
             if (!$actionObject) {
                 continue;
             }
 
             $allUsers = $this->db->iterateColumn('SELECT u.uID FROM Users u');
+            /** @var string $user */
             foreach ($allUsers as $user) {
                 if (!$this->userNeedsBadge((int) $user, $action, $minCount)) {
                     continue;
                 }
 
                 try {
-                    $badge = $automationRule->getBadge();
+                    $badge = $automationRule->badge;
                     if ($output->isVerbose()) {
-                        $output->writeln(sprintf('Awarding badge %s to user %s', $badge->getHandle(), $user));
+                        $output->writeln(sprintf('Awarding badge %s to user %d', $badge->handle, (int) $user));
                     }
 
-                    $this->awardService->giveBadge($automationRule->getBadge(), User::getByUserID((int) $user));
+                    $this->awardService->giveBadge($automationRule->badge, User::getByUserID((int) $user));
                 } catch (AchievementAlreadyExists) {
                     // Ignore
                 }
@@ -72,6 +74,9 @@ final class ActionCountDriver extends AbstractDriver
 
     private function userNeedsBadge(int $userId, int $action, int $minCount): bool
     {
+        $userBadges = $this->awardService->getAllAwardsByUser($userId);
+
+
         // We do it this way because it allows the query to return quickly when there are a ton of rows
         $statement = $this->db->executeQuery('select 1 from UserPointHistory where upuID = ? and upaID = ? limit '
         . ($minCount + 1), [$userId, $action]);

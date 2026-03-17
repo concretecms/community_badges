@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -14,7 +16,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 abstract class AbstractSaver implements SaverInterface
 {
+    /** @var Validation */
     protected $formValidator;
+    /** @var EntityManagerInterface */
     protected $entityManager;
 
     public function __construct(Validation $formValidator, EntityManagerInterface $entityManager)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -23,7 +25,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CommunityBadges
 {
+    /** @var AwardService */
     protected $awardService;
+    /** @var Request */
     protected $request;
 
     public function __construct(AwardService $awardService, Request $request)
@@ -55,20 +59,25 @@ class CommunityBadges
             $userId = $this->request->request->getInt('user', 0);
 
             $user = User::getByUserID($userId);
+            if (!$user instanceof User) {
+                $errorList->add(t('You need to select a valid user.'));
+            }
 
             try {
-                $grantedAward = $this->awardService->getGrantAwardById((int) $grantAwardId);
-                $this->awardService->giveGrantedAward($grantedAward, $user);
-                $editResponse->setMessage(t('Award successfully given to the user %s.', $user->getUserName()));
-            } catch (GrantBadgeNotFound $e) {
+                if ($user) {
+                    $grantedAward = $this->awardService->getGrantAwardById((int) $grantAwardId);
+                    $this->awardService->giveGrantedAward($grantedAward, $user);
+                    $editResponse->setMessage(t('Award successfully given to the user %s.', $user->getUserName()));
+                }
+            } catch (GrantBadgeNotFound) {
                 $errorList->add(t('You need to select a valid grant award.'));
-            } catch (MailTransportError $e) {
+            } catch (MailTransportError) {
                 $errorList->add(t('There was an error while sending the mail notification.'));
-            } catch (NoUserSelected $e) {
+            } catch (NoUserSelected) {
                 $errorList->add(t('You need to select a user.'));
-            } catch (NoAuthorization $e) {
+            } catch (NoAuthorization) {
                 $errorList->add(t("You can't give away an granted award that you don't own by yourself."));
-            } catch (InvalidSelfAssignment $e) {
+            } catch (InvalidSelfAssignment) {
                 $errorList->add(t("You can't award yourself."));
             }
         }

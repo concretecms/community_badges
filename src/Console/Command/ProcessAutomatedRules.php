@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -18,6 +20,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ProcessAutomatedRules extends Command
 {
+    public function __construct(?string $name = null)
+    {
+        parent::__construct($name);
+    }
+
     protected function configure()
     {
         $this->setName('community-badges:process-automated-rules')->setDescription(t(
@@ -31,8 +38,8 @@ class ProcessAutomatedRules extends Command
         /** @var Manager $driverManager */
         $driverManager = $app->make(Manager::class);
 
+        /** @var DriverInterface $driver */
         foreach ($driverManager->getDrivers() as $driver) {
-            /** @var DriverInterface $driver */
             $driver->processManually($input, $output);
         }
 

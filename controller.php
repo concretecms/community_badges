@@ -10,10 +10,16 @@
 namespace Concrete\Package\CommunityBadges;
 
 use Concrete\Core\Application\UserInterface\Dashboard\Navigation\NavigationCache;
-use Concrete\Core\Database\EntityManager\Driver\Driver;use Concrete\Core\Database\EntityManager\Provider\ProviderAggregateInterface;
-use Concrete\Core\Database\EntityManager\Provider\ProviderInterface;use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
+use Concrete\Core\Database\EntityManager\Driver\Driver;
+use Concrete\Core\Database\EntityManager\Provider\ProviderAggregateInterface;
+use Concrete\Core\Database\EntityManager\Provider\ProviderInterface;
+use Concrete\Core\Database\EntityManager\Provider\StandardPackageProvider;
 use Concrete\Core\Package\Package;
-use Doctrine\ORM\Mapping\Driver\AttributeDriver;use PortlandLabs\CommunityBadges\Console\Command\ProcessAutomatedRules;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
+use PortlandLabs\CommunityBadges\Console\Command\ProcessAutomatedRules;
 use PortlandLabs\CommunityBadges\Provider\ServiceProvider;
 
 class Controller extends Package implements ProviderAggregateInterface
@@ -27,12 +33,12 @@ class Controller extends Package implements ProviderAggregateInterface
 
     public function getPackageDescription()
     {
-        return t("Integrate the community awards feature awards into your site.");
+        return t('Integrate the community awards feature awards into your site.');
     }
 
     public function getPackageName()
     {
-        return t("Community Badges");
+        return t('Community Badges');
     }
 
     public function on_start()
@@ -50,7 +56,7 @@ class Controller extends Package implements ProviderAggregateInterface
     public function install()
     {
         $pkg = parent::install();
-        $this->installContentFile("data.xml");
+        $this->installContentFile('data.xml');
         /** @var NavigationCache $navigationCache */
         $navigationCache = $this->app->make(NavigationCache::class);
         $navigationCache->clear();
@@ -60,7 +66,7 @@ class Controller extends Package implements ProviderAggregateInterface
     public function upgrade()
     {
         parent::upgrade();
-        $this->installContentFile("data.xml");
+        $this->installContentFile('data.xml');
         $navigationCache = $this->app->make(NavigationCache::class);
         $navigationCache->clear();
     }
@@ -68,12 +74,19 @@ class Controller extends Package implements ProviderAggregateInterface
     #[\Override]
     public function getEntityManagerProvider(): ProviderInterface
     {
-        return new class($this->app, $this, ['src/Entity' => "\PortlandLabs\CommunityBadges\Entity"]) extends
+        $legacy = new StandardPackageProvider($this->app, $this, ['src/EntityLegacy' => "\PortlandLabs\CommunityBadges\EntityLegacy"]);
+
+        return new class($legacy, $this->app, $this, ['src/Entity' => "\PortlandLabs\CommunityBadges\Entity"]) extends
             StandardPackageProvider {
+            public function __construct(private StandardPackageProvider $legacy, ...$args)
+            {
+                parent::__construct(...$args);
+            }
+
             #[\Override]
             public function getDrivers(): array
             {
-                $drivers = [];
+                $drivers = $this->legacy->getDrivers();
                 $pkgPath = $this->pkg->getPackagePath();
 
                 foreach ($this->locations as $path => $prefix) {

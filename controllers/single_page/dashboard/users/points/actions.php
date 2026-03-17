@@ -10,25 +10,21 @@
 namespace Concrete\Package\CommunityBadges\Controller\SinglePage\Dashboard\Users\Points;
 
 use Concrete\Core\Page\Controller\DashboardPageController;
+use Concrete\Core\Page\Page;
 use Concrete\Core\Search\Pagination\PaginationFactory;
-use Concrete\Core\User\Group\Group;
-use PortlandLabs\CommunityBadges\User\Point\Action\Action as UserPointAction;
+use PortlandLabs\CommunityBadges\Entity\Point\Action;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionService;
 use PortlandLabs\CommunityBadges\User\Point\Action\ActionList as UserPointActionList;
 
 class Actions extends DashboardPageController
 {
     public $helpers = ['form', 'concrete/ui', 'concrete/urls', 'image', 'concrete/asset_library'];
 
-    /**
-     * @var UserPointAction
-     */
-    public $upa;
-
-    public function on_start()
-    {
-        parent::on_start();
-
-        $this->upa = new UserPointAction();
+    public function __construct(
+        Page $c,
+        public readonly ActionService $actionService,
+    ) {
+        parent::__construct($c);
     }
 
     public function add()
@@ -40,15 +36,10 @@ class Actions extends DashboardPageController
 
     public function view($upaID = null)
     {
-        if (isset($upaID)) {
+        $action = (int) $upaID > 0 ? $this->actionService->getRepository()->find((int) $upaID) : null;
+        if ($action) {
             $this->set('add_edit', t('Edit'));
-            $this->upa->load($upaID);
-            $this->setAttribs($this->upa);
-            $this->set('upaHasCustomClass', $this->upa->hasCustomClass());
-            $g = $this->upa->getUserPointActionBadgeGroupObject();
-            if (is_object($g)) {
-                $this->set('upaBadgeGroupName', $g->getGroupDisplayName(false));
-            }
+            $this->set('action', $action);
             $this->set('showForm', true);
         }
 
@@ -64,10 +55,10 @@ class Actions extends DashboardPageController
 
     public function getActionList(): UserPointActionList
     {
-        $al = new UserPointActionList();
+        $al = new UserPointActionList($this->getEntityManager());
 
         if (!$this->request->query->has('ccm_order_by')) {
-            $al->sortBy('upa.upaName', 'ASC');
+            $al->sortBy('upa.name', 'ASC');
         }
 
         return $al;
@@ -77,30 +68,31 @@ class Actions extends DashboardPageController
     {
         if (!$this->token->validate('add_action')) {
             $this->error->add('Invalid Token');
-
-            return $this->add();
+            $this->add();
+            return;
         }
 
         $post = $this->request->request;
-        if (($upaID = $post->get('upaID')) > 0) {
-            $this->upa->load($upaID);
-            if (!$this->upa->hasCustomClass()) {
-                $this->upa->upaHandle = $post->get('upaHandle');
-            }
 
-            $this->upa->upaName = $post->get('upaName');
-            $this->upa->upaDefaultPoints = (int) $post->get('upaDefaultPoints');
-            $this->upa->gBadgeID = (int) ($post->get('gBadgeID') ?? 0);
-            $this->upa->upaIsActive = (int) ($post->get('upaIsActive') ?? 0);
-
-            if (!isset($this->upa->pkgID)) {
-                // i hate this activerecord crap
-                $this->upa->pkgID = 0;
-            }
-
-            $this->upa->save();
+        $upaID = (int) $post->get('upaID');
+        $action = $upaID > 0 ? $this->actionService->getRepository()->find($upaID) : null;
+        if ($action) {
+            $action->handle = (string) $post->get('upaHandle');
+            $action->name = (string) $post->get('upaName');
+            $action->defaultPoints = (int) $post->get('upaDefaultPoints');
+            $action->isActive = (int) ($post->get('upaIsActive') ?? 0);
+            $this->actionService->em->flush();
         } else {
-            UserPointAction::add($post->get('upaHandle'), $post->get('upaName'), $post->get('upaDefaultPoints'), $post->get('gBadgeID'), $post->get('upaIsActive'));
+            $action = new Action(
+                $post->get('upaHandle'),
+                $post->get('upaName'),
+                $post->get('upaDefaultPoints'),
+                false,
+                $post->get('upaIsActive'),
+                0,
+                null,
+            );
+            $this->actionService->add($action);
         }
 
         return $this->buildRedirect($this->action('action_saved'));
@@ -114,8 +106,11 @@ class Actions extends DashboardPageController
             return $this->view();
         }
 
-        $this->upa->load($upaID);
-        $this->upa->delete();
+        $action = $this->actionService->getRepository()->find($upaID);
+        if ($action) {
+            $this->actionService->em->remove($action);
+            $this->actionService->em->flush();
+        }
 
         return $this->buildRedirect($this->action('action_deleted'));
     }
@@ -130,13 +125,5 @@ class Actions extends DashboardPageController
     {
         $this->set('message', t('Community Point Action Saved'));
         $this->view();
-    }
-
-    protected function setAttribs(UserPointAction $upa)
-    {
-        $attribs = $upa->getAttributeNames();
-        foreach ($attribs as $key) {
-            $this->set($key, $upa->{$key});
-        }
     }
 }

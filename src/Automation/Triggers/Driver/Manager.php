@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -11,12 +13,10 @@ namespace PortlandLabs\CommunityBadges\Automation\Triggers\Driver;
 
 use Concrete\Core\Application\Application;
 use Concrete\Core\Support\Manager as CoreManager;
+use Illuminate\Contracts\Container\Container;
 
 class Manager extends CoreManager
 {
-    /** @var Application */
-    protected $app;
-
     public function __construct(Application $app)
     {
         /** @noinspection PhpParamsInspection */
@@ -32,37 +32,37 @@ class Manager extends CoreManager
     /** @noinspection PhpUnused */
     public function createEnterGroupDriver()
     {
-        return $this->app->make(EnterGroupDriver::class);
+        return $this->app->get(EnterGroupDriver::class);
     }
 
     /** @noinspection PhpUnused */
     public function createLeaveGroupDriver()
     {
-        return $this->app->make(LeaveGroupDriver::class);
+        return $this->app->get(LeaveGroupDriver::class);
     }
 
     /** @noinspection PhpUnused */
     public function createAccountAgeDriver()
     {
-        return $this->app->make(AccountAgeDriver::class);
+        return $this->app->get(AccountAgeDriver::class);
     }
 
     /** @noinspection PhpUnused */
     public function createCommunityPointsDriver()
     {
-        return $this->app->make(CommunityPointsDriver::class);
+        return $this->app->get(CommunityPointsDriver::class);
     }
 
     /** @noinspection PhpUnused */
     public function createActionCountDriver(): ActionCountDriver
     {
-        return $this->app->make(ActionCountDriver::class);
+        return $this->app->get(ActionCountDriver::class);
     }
 
     public function register()
     {
+        /** @var DriverInterface $driver */
         foreach ($this->getDrivers() as $driver) {
-            /** @var DriverInterface $driver */
             $driver->register();
         }
     }

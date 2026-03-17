@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -20,7 +22,7 @@ abstract class AutomationRuleElementController extends ElementController
     /**
      * @return AutomationRule
      */
-    public function getAutomationRule(): AutomationRule
+    public function getAutomationRule(): ?AutomationRule
     {
         return $this->automationRule;
     }

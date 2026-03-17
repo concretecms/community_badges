@@ -9,7 +9,7 @@ use Concrete\Core\Support\Facade\Url;
  * @var Concrete\Core\Validation\CSRF\Token $token
  * @var Concrete\Core\Form\Service\Widget\UserSelector $form_user_selector
  * @var PortlandLabs\CommunityBadges\User\Point\EntryList $upEntryList
- * @var PortlandLabs\CommunityBadges\User\Point\Entry[] $entries
+ * @var PortlandLabs\CommunityBadges\Entity\Point\TimelineEntry[] $entries
  * @var Pagerfanta\Pagerfanta $pagination
  */
 
@@ -39,9 +39,9 @@ if (count($entries) > 0) {
     	<thead>
     		<tr>
                 <th class="<?=$upEntryList->getSortClassName('u.uName')?>"><a href="<?=$upEntryList->getSortURL('u.uName')?>"><?= t('User') ?></a></th>
-                <th class="<?=$upEntryList->getSortClassName('upa.upaName')?>"><a href="<?=$upEntryList->getSortURL('upa.upaName')?>"><?=t('Action')?></a></th>
-                <th class="<?=$upEntryList->getSortClassName('uph.upPoints')?>"><a href="<?=$upEntryList->getSortURL('uph.upPoints')?>"><?=t('Points')?></a></th>
-                <th class="<?=$upEntryList->getSortClassName('uph.timestamp')?>"><a href="<?=$upEntryList->getSortURL('uph.timestamp')?>"><?=t('Date Assigned')?></a></th>
+                <th class="<?=$upEntryList->getSortClassName('upa.name')?>"><a href="<?=$upEntryList->getSortURL('upa.name')?>"><?=t('Action')?></a></th>
+                <th class="<?=$upEntryList->getSortClassName('uph.points')?>"><a href="<?=$upEntryList->getSortURL('uph.points')?>"><?=t('Points')?></a></th>
+                <th class="<?=$upEntryList->getSortClassName('uph.date')?>"><a href="<?=$upEntryList->getSortURL('uph.date')?>"><?=t('Date Assigned')?></a></th>
                 <th><span><?=t('Details')?></span></th>
                 <th></th>
             </tr>
@@ -49,18 +49,16 @@ if (count($entries) > 0) {
         <tbody>
         <?php
             foreach ($entries as $up) {
-                $ui = $up->getUserPointEntryUserObject();
-                $action = $up->getUserPointEntryActionObject();
                 ?>
                 <tr>
-                    <td><?= is_object($ui) ? h($ui->getUserName()) : '' ?></td>
-                    <td><?= is_object($action) ? h($action->getUserPointActionName()) : '' ?></td>
-                    <td><?= number_format($up->getUserPointEntryValue()) ?></td>
-                    <td><?= $dh->formatDateTime($up->getUserPointEntryTimestamp()) ?></td>
-                    <td><?= $up->getUserPointEntryDescription() ?></td>
+                    <td><?= h($up->user->getUserName()) ?></td>
+                    <td><?= h($up->action->name) ?></td>
+                    <td><?= number_format($up->points) ?></td>
+                    <td><?= $dh->formatDateTime($up->date) ?></td>
+                    <td><?= $controller->getEntryDescription($up) ?></td>
                     <td class="text-right">
                         <?php
-                            $deleteUrl = \Concrete\Core\Url\Url::createFromUrl($view->action('deleteEntry', $up->getUserPointEntryID()));
+                            $deleteUrl = \Concrete\Core\Url\Url::createFromUrl($view->action('deleteEntry', $up->id));
                             $deleteUrl->setQuery([
                                 'ccm_token' => $token->generate('delete_community_points'),
                             ]);

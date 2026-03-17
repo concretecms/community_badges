@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpInconsistentReturnPointsInspection */
+
 /** @noinspection DuplicatedCode */
 
 /**
@@ -28,6 +29,9 @@ class CommunityBadges extends DashboardPageController
 
     public function view()
     {
-        return $this->responseFactory->redirect((string)Url::to("/dashboard/system/community_badges/automation"), Response::HTTP_TEMPORARY_REDIRECT);
+        return $this->responseFactory->redirect(
+            (string) Url::to('/dashboard/system/community_badges/automation'),
+            Response::HTTP_TEMPORARY_REDIRECT,
+        );
     }
 }

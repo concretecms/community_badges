@@ -40,43 +40,47 @@ class Grant extends DashboardPageController
     }
 
     /** @noinspection PhpUnused */
-    public function granted(
-        $grantedAwardId = null
-    )
+    public function granted($grantedAwardId = null)
     {
         try {
-            $grantedAward = $this->awardService->getGrantAwardById((int)$grantedAwardId);
+            $grantedAward = $this->awardService->getGrantAwardById((int) $grantedAwardId);
 
             $this->set('awardList', $this->awardService->getAwardList());
-            $this->set("success", t("The grant award was successfully assigned to the user %s.", $grantedAward->getUser()->getUserName()));
+            $this->set('success', t(
+                'The grant award was successfully assigned to the user %s.',
+                $grantedAward->getUser()->getUserName(),
+            ));
         } catch (GrantBadgeNotFound $e) {
-            return $this->responseFactory->notFound(t("Grant Award not found."));
+            return $this->responseFactory->notFound(t('Grant Award not found.'));
         }
     }
 
     public function view()
     {
-        if ($this->request->getMethod() === "POST") {
-            $awardId = $this->request->request->getInt("award", 0);
-            $userId = $this->request->request->getInt("user", 0);
+        if ($this->request->getMethod() === 'POST') {
+            $awardId = $this->request->request->getInt('award', 0);
+            $userId = $this->request->request->getInt('user', 0);
 
-            if ($this->token->validate("grant_award")) {
+            if ($this->token->validate('grant_award')) {
                 $user = User::getByUserID($userId);
 
                 try {
-                    $award = $this->awardService->getAwardById((int)$awardId);
+                    $award = $this->awardService->getAwardById((int) $awardId);
 
                     try {
                         $userBadge = $this->awardService->grantAward($award, $user);
 
-                        return $this->responseFactory->redirect((string)Url::to("/dashboard/users/badges/grant/granted", $userBadge->getId()), Response::HTTP_TEMPORARY_REDIRECT);
+                        return $this->responseFactory->redirect(
+                            (string) Url::to('/dashboard/users/badges/grant/granted', $userBadge->getId()),
+                            Response::HTTP_TEMPORARY_REDIRECT,
+                        );
                     } catch (MailTransportError $e) {
-                        $this->error->add(t("There was an error while sending the mail notification."));
+                        $this->error->add(t('There was an error while sending the mail notification.'));
                     } catch (NoUserSelected $e) {
-                        $this->error->add(t("You need to select a user."));
+                        $this->error->add(t('You need to select a user.'));
                     }
                 } catch (BadgeNotFound $e) {
-                    $this->error->add(t("You need to select a valid award."));
+                    $this->error->add(t('You need to select a valid award.'));
                 }
             } else {
                 $this->error->add($this->token->getErrorMessage());

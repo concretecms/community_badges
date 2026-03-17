@@ -1,23 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PortlandLabs\CommunityBadges\User\Point\Action;
 
-class ActionDescription
+class ActionDescription implements ActionDescriptionInterface
 {
-    public $comments;
+    public function __construct(
+        public string $comments,
+    ) {}
 
-    public function setComments($comments)
-    {
-        $this->comments = $comments;
-    }
-
-    public function getComments()
+    public function getUserPointActionDescription(): string
     {
         return $this->comments;
-    }
-
-    public function getUserPointActionDescription()
-    {
-        return $this->getComments();
     }
 }

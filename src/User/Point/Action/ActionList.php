@@ -1,27 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PortlandLabs\CommunityBadges\User\Point\Action;
 
-use Concrete\Core\Search\ItemList\Database\ItemList as DatabaseItemList;
+use Concrete\Core\Search\ItemList\EntityItemList;
 use Concrete\Core\Search\Pagination\Pagination;
-use Pagerfanta\Adapter\DoctrineDbalAdapter;
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\EntityManager;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use PortlandLabs\CommunityBadges\Entity\Point\Action as EntityAction;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionRepository;
 
-class ActionList extends DatabaseItemList
+class ActionList extends EntityItemList
 {
     protected $autoSortColumns = ['upa.upaName', 'upa.upaHandle', 'upa.upaDefaultPoints', 'upa.gBadgeID'];
 
-    public function createQuery()
+    public function __construct(
+        protected EntityManager $em,
+    ) {
+        parent::__construct();
+    }
+
+    public function createQuery(): void
     {
-        $db = $this->query->getConnection();
-        $this->query
-            ->select('upa.*', 'g.gName')
-            ->from('UserPointActions', 'upa')
-            ->leftJoin('upa', $db->getDatabasePlatform()->quoteSingleIdentifier('Groups'), 'g', 'upa.gBadgeID = g.gID');
+        $repository = $this->getEntityManager()->getRepository(EntityAction::class);
+        assert($repository instanceof ActionRepository);
+        $this->query = $repository->createQueryBuilder('upa');
     }
 
     public function filterByIsActive($active)
     {
-        $this->query->andWhere('upa.upaIsActive = :upaIsActive');
+        $this->query->andWhere('upa.isActive = :upaIsActive');
         $this->query->setParameter('upaIsActive', $active);
     }
 
@@ -32,14 +42,15 @@ class ActionList extends DatabaseItemList
      */
     public function getTotalResults()
     {
+        /** @var QueryBuilder $query */
         $query = $this->deliverQueryObject();
 
-        return $query
+        return (int) $query
             ->resetQueryParts(['groupBy', 'orderBy'])
             ->select('count(distinct upa.upaID)')
             ->setMaxResults(1)
             ->execute()
-            ->fetchColumn();
+            ->fetchOne();
     }
 
     /**
@@ -49,15 +60,20 @@ class ActionList extends DatabaseItemList
      */
     public function createPaginationObject()
     {
-        $adapter = new DoctrineDbalAdapter($this->deliverQueryObject(), static function ($query) {
-            $query->resetQueryParts(['groupBy', 'orderBy'])->select('count(distinct upa.upaID)')->setMaxResults(1);
-        });
+        $query = $this->deliverQueryObject();
+        $adapter = new QueryAdapter($query);
 
         return new Pagination($this, $adapter);
     }
 
-    public function getResult($mixed)
+    public function getResult($mixed): EntityAction
     {
+        assert($mixed instanceof EntityAction);
         return $mixed;
+    }
+
+    public function getEntityManager(): EntityManager
+    {
+        return $this->em;
     }
 }

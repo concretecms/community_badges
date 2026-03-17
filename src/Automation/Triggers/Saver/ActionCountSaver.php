@@ -16,15 +16,16 @@ class ActionCountSaver extends AbstractSaver
         $this->formValidator->addRequired('action', t('Please enter the action.'));
         $this->formValidator->addRequired('minCount', t('Please enter the minimum count.'));
         $this->formValidator->test();
+        /** @var ErrorList */
         return $this->formValidator->getError();
     }
 
     public function saveConfiguration(Request $request, AutomationRule $automationRule): void
     {
-        $automationRule->setConfiguration([
+        $automationRule->configuration = [
             'action' => $request->request->getInt('action'),
             'minCount' => $request->request->getInt('minCount'),
-        ]);
+        ];
 
         $this->entityManager->persist($automationRule);
         $this->entityManager->flush();

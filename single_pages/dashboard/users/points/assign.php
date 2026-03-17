@@ -25,7 +25,7 @@ use Concrete\Core\Support\Facade\Url;
     ?>
 	<div class="form-group">
 	    <?= $form->label('upUser', t('User')) ?>
-        <?= $form_user_selector->quickSelect('upUser', $upUser ?? 0, ['autofocus' => 'autofocus']) ?>
+        <?= $form_user_selector->quickSelect('upUser', $upUser ?? 0) ?>
 	</div>
 
 	<div class="form-group">
@@ -58,8 +58,19 @@ use Concrete\Core\Support\Facade\Url;
 
 <script type="text/javascript">
 $(function() {
-	$('#upaID').change(function() {
-		var src = $('#upaID').attr('json-src')+'/-/'+$('#upaID').val();
+    const select = $('select[name=upaID]');
+    const input = $('input[name=upPoints]');
+
+    function setPointValue() {
+        const currentText = select.children(':selected').text()
+        const points = Number(currentText.split(' - ', 2)[0] ?? '');
+
+        input.val(`${points}`);
+    }
+
+    select.change(function() {
+        setPointValue();
+		var src = select.attr('json-src') + '/-/' + select.val();
 		$.getJSON(src,function(j) {
 			$('#upPoints').val(j);
 		});

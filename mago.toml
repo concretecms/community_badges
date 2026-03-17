@@ -4,7 +4,7 @@ php-version = "8.4.0"
 
 [source]
 workspace = "."
-paths = ["src"]
+paths = ["src", "controllers"]
 includes = ["vendor"]
 excludes = []
 
@@ -14,6 +14,7 @@ tab-width = 4
 use-tabs = false
 
 [linter]
+baseline = ".mago-baseline-linter.toml"
 integrations = []
 
 [linter.rules]
@@ -22,7 +23,8 @@ literal-named-argument = { enabled = false }
 halstead = { effort-threshold = 7000 }
 
 [analyzer]
-plugins = []
+baseline = ".mago-baseline-analyzer.toml"
+plugins = ['psr-container']
 find-unused-definitions = true
 find-unused-expressions = false
 analyze-dead-code = false

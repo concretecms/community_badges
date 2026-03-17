@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -9,30 +11,21 @@
 
 namespace PortlandLabs\CommunityBadges\Provider;
 
-use Concrete\Core\Application\Application;
+use Concrete\Core\Events\EventDispatcher;
 use Concrete\Core\Foundation\Service\Provider;
 use Concrete\Core\Http\Middleware\OAuthAuthenticationMiddleware;
+use Concrete\Core\Routing\RouteGroupBuilder;
 use Concrete\Core\Routing\Router;
+use Concrete\Core\Search\Field\Group;
+use Concrete\Core\Search\Field\GroupInterface;
+use Concrete\Core\User\Search\Field\Manager as UserManager;
 use PortlandLabs\CommunityBadges\API\V1\CommunityBadges;
 use PortlandLabs\CommunityBadges\API\V1\Middleware\FractalNegotiatorMiddleware;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;
 use PortlandLabs\CommunityBadges\User\Search\Field\Field\AchievementField;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ServiceProvider extends Provider
 {
-    protected $eventDispatcher;
-    protected $responseFactory;
-    protected $router;
-
-    public function __construct(Application $app, EventDispatcherInterface $eventDispatcher, Router $router)
-    {
-        parent::__construct($app);
-
-        $this->eventDispatcher = $eventDispatcher;
-        $this->router = $router;
-    }
-
     public function register()
     {
         $this->registerAPI();
@@ -47,8 +40,11 @@ class ServiceProvider extends Provider
 
     protected function registerSearchFields()
     {
-        $this->app->extend('manager/search_field/user', static function ($manager) {
-            $manager->getGroupByName('Core Properties')->addField(new AchievementField());
+        $this->app->extend('manager/search_field/user', static function (UserManager $manager) {
+            $group = $manager->getGroupByName('Core Properties');
+            if ($group instanceof Group) {
+                $group->addField(new AchievementField());
+            }
             return $manager;
         });
     }
@@ -56,44 +52,48 @@ class ServiceProvider extends Provider
     protected function registerAutomationManager()
     {
         $this->app->singleton(Manager::class);
-        /** @var Manager $driverManager */
-        $driverManager = $this->app->make(Manager::class);
+        $app = $this->app;
 
-        $this->eventDispatcher->addListener('on_start', static function () use ($driverManager) {
-            $driverManager->register();
+        $this->app->extend(EventDispatcher::class, static function (EventDispatcher $dispatcher) use ($app) {
+            $dispatcher->getEventDispatcher()->addListener('on_start', static function () use ($app) {
+                $app->get(Manager::class)?->register();
+            });
+            return $dispatcher;
         });
     }
 
     protected function registerAPI()
     {
-        $this->router
-            ->buildGroup()
-            ->setPrefix('/api/v1')
-            ->addMiddleware(FractalNegotiatorMiddleware::class)
-            ->routes(static function ($groupRouter) {
-                /**
-                 * @var $groupRouter Router
-                 */
+        $this->app->extend(Router::class, static function (Router $router) {
+            /** @var RouteGroupBuilder $group */
+            $group = $router->buildGroup();
+            $group
+                ->setPrefix('/api/v1')
+                ->addMiddleware(FractalNegotiatorMiddleware::class)
+                ->routes(static function (Router $groupRouter) {
+                    /** @noinspection PhpParamsInspection */
+                    /** @mago-expect analysis:invalid-argument */
+                    $groupRouter->post('/community_badges/give_award', [CommunityBadges::class, 'giveAward']);
+                    /** @noinspection PhpParamsInspection */
+                    /** @mago-expect analysis:invalid-argument */
+                    $groupRouter->post('/community_badges/dismiss_grant_award', [
+                        CommunityBadges::class,
+                        'dismissGrantAward',
+                    ]);
+                });
 
-                /** @noinspection PhpParamsInspection */
-                $groupRouter->post('/community_badges/give_award', [CommunityBadges::class, 'giveAward']);
-                $groupRouter->post('/community_badges/dismiss_grant_award', [
-                    CommunityBadges::class,
-                    'dismissGrantAward',
-                ]);
-            });
-        $this->router
-            ->buildGroup()
-            ->setPrefix('/api/v1')
-            ->addMiddleware(OAuthAuthenticationMiddleware::class)
-            ->addMiddleware(FractalNegotiatorMiddleware::class)
-            ->routes(static function ($groupRouter) {
-                /**
-                 * @var $groupRouter Router
-                 */
-
-                /** @noinspection PhpParamsInspection */
-                $groupRouter->get('/community_badges', [CommunityBadges::class, 'getList']);
-            });
+            /** @var RouteGroupBuilder $group */
+            $group = $router->buildGroup();
+            $group
+                ->setPrefix('/api/v1')
+                ->addMiddleware(OAuthAuthenticationMiddleware::class)
+                ->addMiddleware(FractalNegotiatorMiddleware::class)
+                ->routes(static function (Router $groupRouter) {
+                    /** @noinspection PhpParamsInspection */
+                    /** @mago-expect analysis:invalid-argument */
+                    $groupRouter->get('/community_badges', [CommunityBadges::class, 'getList']);
+                });
+            return $router;
+        });
     }
 }

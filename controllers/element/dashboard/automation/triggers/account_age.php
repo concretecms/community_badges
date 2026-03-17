@@ -27,9 +27,9 @@ class AccountAge extends AutomationRuleElementController
 
     public function view()
     {
-        $configuration = $this->getAutomationRule()->getConfiguration();
-        if (is_array($configuration) && isset($configuration["accountAge"])) {
-            $this->set("accountAge", $configuration["accountAge"]);
+        $configuration = $this->getAutomationRule()?->getConfiguration();
+        if (is_array($configuration) && isset($configuration['accountAge'])) {
+            $this->set('accountAge', $configuration['accountAge']);
         }
     }
 }

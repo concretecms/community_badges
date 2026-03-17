@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -28,11 +30,12 @@ class AccountAgeDriver extends AbstractDriver
 {
     public function getConfigurationFormElement(): Element
     {
-        return new Element('dashboard/automation/triggers/account_age', 'community_badges');
+        return $this->getElement('dashboard/automation/triggers/account_age');
     }
 
     public function getSaver(): SaverInterface
     {
+        /** @var SaverInterface */
         return $this->app->make(AccountAgeSaver::class);
     }
 
@@ -50,29 +53,32 @@ class AccountAgeDriver extends AbstractDriver
         $awardService = $this->app->make(AwardService::class);
 
         foreach ($this->getAutomatedRulesByDriverHandle('account_age') as $automationRule) {
-            $ruleConfig = $automationRule->getConfiguration();
+            $ruleConfig = $automationRule->configuration;
 
             if (is_array($ruleConfig) && isset($ruleConfig['accountAge'])) {
-                $accountAge = $ruleConfig['accountAge'];
+                $accountAge = (int) $ruleConfig['accountAge'];
 
                 try {
                     /** @noinspection SqlDialectInspection */
                     /** @noinspection SqlNoDataSourceInspection */
                     $rows = $db->fetchAllAssociative(sprintf(
                         'SELECT uID FROM Users WHERE uDateAdded < DATE_SUB(NOW(), INTERVAL %s YEAR)',
-                        (int) $accountAge,
+                        $accountAge,
                     ));
 
                     foreach ($rows as $row) {
-                        $uID = $row['uID'];
+                        $uID = (int) $row['uID'];
 
-                        if (!$this->isItemProcessed($automationRule, $uID)) {
+                        if (!$this->isItemProcessed($automationRule, (string) $uID)) {
                             $user = User::getByUserID($uID);
-                            $awardService->giveBadge($automationRule->getBadge(), $user);
+                            if (!$user instanceof User) {
+                                continue;
+                            }
+                            $awardService->giveBadge($automationRule->badge, $user);
 
                             $io->success(sprintf(
                                 'Awarded badge %s for users %s.',
-                                $automationRule->getBadge()->getName(),
+                                $automationRule->badge->name,
                                 $user->getUserName(),
                             ));
 

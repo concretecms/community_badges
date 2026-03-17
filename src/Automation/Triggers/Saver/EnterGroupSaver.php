@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -20,14 +22,15 @@ class EnterGroupSaver extends AbstractSaver
         $this->formValidator->setData($request->request->all());
         $this->formValidator->addRequired('groupId', t('Please select a valid group.'));
         $this->formValidator->test();
+        /** @var ErrorList */
         return $this->formValidator->getError();
     }
 
     public function saveConfiguration(Request $request, AutomationRule $automationRule): void
     {
-        $automationRule->setConfiguration([
+        $automationRule->configuration = [
             'groupId' => $request->request->getInt('groupId'),
-        ]);
+        ];
 
         $this->entityManager->persist($automationRule);
         $this->entityManager->flush();

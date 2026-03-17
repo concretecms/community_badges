@@ -1,4 +1,5 @@
 <?php /** @noinspection PhpInconsistentReturnPointsInspection */
+
 /** @noinspection DuplicatedCode */
 
 /**
@@ -13,8 +14,8 @@ namespace Concrete\Package\CommunityBadges\Controller\SinglePage\Dashboard\Users
 use Concrete\Core\File\File;
 use Concrete\Core\Form\Service\Validation;
 use Concrete\Core\Http\Response;
-use Concrete\Core\Page\Controller\DashboardPageController;
 use Concrete\Core\Http\ResponseFactory;
+use Concrete\Core\Page\Controller\DashboardPageController;
 use Concrete\Core\Support\Facade\Url;
 use Concrete\Package\CommunityBadges\Controller\Element\Badges\Header;
 use PortlandLabs\CommunityBadges\AwardService;
@@ -45,9 +46,9 @@ class Badges extends DashboardPageController
     private function validate(): bool
     {
         $this->validationService->setData($this->request->request->all());
-        $this->validationService->addRequired("name", t("Please enter a name."));
-        $this->validationService->addRequired("handle", t("Please enter a handle."));
-        $this->validationService->addRequired("description", t("Please enter description."));
+        $this->validationService->addRequired('name', t('Please enter a name.'));
+        $this->validationService->addRequired('handle', t('Please enter a handle.'));
+        $this->validationService->addRequired('description', t('Please enter description.'));
 
         if ($this->validationService->test()) {
             return true;
@@ -57,31 +58,27 @@ class Badges extends DashboardPageController
         }
     }
 
-    private function save(
-        Badge $badge
-    ): void
+    private function save(Badge $badge): void
     {
-        $badge->setDescription($this->request->request->get("description"));
-        $badge->setName($this->request->request->get("name"));
-        $badge->setHandle($this->request->request->get("handle"));
-        $badge->setThumbnail(File::getByID($this->request->request->getInt("thumbnail")));
+        $badge->description = $this->request->request->get('description');
+        $badge->name = $this->request->request->get('name');
+        $badge->handle = $this->request->request->get('handle');
+        $badge->thumbnail = File::getByID($this->request->request->getInt('thumbnail'));
 
         $this->awardService->saveBadge($badge);
     }
 
     /** @noinspection PhpUnused */
-    public function saved(
-        $badgeId = null
-    )
+    public function saved($badgeId = null)
     {
         $this->view();
 
         try {
-            $badge = $this->awardService->getBadgeById((int)$badgeId);
+            $badge = $this->awardService->getBadgeById((int) $badgeId);
 
-            $this->set("success", t("The badge %s was successfully saved.", $badge->getName()));
+            $this->set('success', t('The badge %s was successfully saved.', $badge->getName()));
         } catch (BadgeNotFound $e) {
-            return $this->responseFactory->notFound(t("Awarded Award not found."));
+            return $this->responseFactory->notFound(t('Awarded Award not found.'));
         }
     }
 
@@ -90,73 +87,78 @@ class Badges extends DashboardPageController
     {
         $this->view();
 
-        $this->set("success", t("The award has been successfully removed."));
+        $this->set('success', t('The award has been successfully removed.'));
     }
 
     public function add()
     {
-        $badge = new Badge();
-        $this->set("badge", $badge);
-        $this->set("isNew", true);
-        $this->set("badgeTypes", $this->awardService->getBadgeTypeList());
-        $this->set("badgeType", BadgeTypes::AWARD);
+        $badge = new Badge('', '', '', null);
+        $this->set('badge', $badge);
+        $this->set('isNew', true);
+        $this->set('badgeTypes', $this->awardService->getBadgeTypeList());
+        $this->set('badgeType', BadgeTypes::AWARD);
 
-        $this->render("/dashboard/users/badges/edit");
+        $this->render('/dashboard/users/badges/edit');
 
-        if ($this->request->getMethod() === "POST") {
+        if ($this->request->getMethod() === 'POST') {
             if ($this->validate()) {
-                if ($this->request->request->get("badgeType") === BadgeTypes::AWARD) {
-                    $badge = new Award();
+                if ($this->request->request->get('badgeType') === BadgeTypes::AWARD) {
+                    $badge = new Award('', '', '', null);
                 } else {
-                    $badge = new Achievement();
+                    $badge = new Achievement('', '', '', null);
                 }
 
                 $this->save($badge);
 
-                return $this->responseFactory->redirect((string)Url::to("/dashboard/users/badges/saved", $badge->getId()), Response::HTTP_TEMPORARY_REDIRECT);
+                return $this->responseFactory->redirect(
+                    (string) Url::to('/dashboard/users/badges/saved', $badge->getId()),
+                    Response::HTTP_TEMPORARY_REDIRECT,
+                );
             }
         }
     }
 
-    public function remove(
-        $badgeId = null
-    )
+    public function remove($badgeId = null)
     {
         try {
-            $badge = $this->awardService->getBadgeById((int)$badgeId);
+            $badge = $this->awardService->getBadgeById((int) $badgeId);
             $this->awardService->removeBadge($badge);
-            return $this->responseFactory->redirect((string)Url::to("/dashboard/users/badges/removed"), Response::HTTP_TEMPORARY_REDIRECT);
+            return $this->responseFactory->redirect(
+                (string) Url::to('/dashboard/users/badges/removed'),
+                Response::HTTP_TEMPORARY_REDIRECT,
+            );
         } catch (BadgeNotFound $e) {
-            return $this->responseFactory->notFound(t("Award not found."));
+            return $this->responseFactory->notFound(t('Award not found.'));
         }
     }
 
-    public function edit(
-        $badgeId = null
-    )
+    public function edit($badgeId = null)
     {
         try {
-            $badge = $this->awardService->getBadgeById((int)$badgeId);
-            $this->set("badge", $badge);
-            $this->set("isNew", false);
-            $this->render("/dashboard/users/badges/edit");
+            $badge = $this->awardService->getBadgeById((int) $badgeId);
+            $this->set('badge', $badge);
+            $this->set('isNew', false);
+            $this->render('/dashboard/users/badges/edit');
         } catch (BadgeNotFound $e) {
-            return $this->responseFactory->notFound(t("Award not found."));
+            return $this->responseFactory->notFound(t('Award not found.'));
         }
 
-        if ($this->request->getMethod() === "POST") {
+        if ($this->request->getMethod() === 'POST') {
             if ($this->validate()) {
                 $this->save($badge);
 
-                return $this->responseFactory->redirect((string)Url::to("/dashboard/users/badges/saved", $badge->getId()), Response::HTTP_TEMPORARY_REDIRECT);
+                return $this->responseFactory->redirect(
+                    (string) Url::to('/dashboard/users/badges/saved', $badge->getId()),
+                    Response::HTTP_TEMPORARY_REDIRECT,
+                );
             }
         }
     }
 
     public function view()
     {
-        $this->set("awards", $this->awardService->getAllAwards());
-        $this->set("achievements", $this->awardService->getAllAchievements());
-        $this->set("headerMenu", new Header());
+        $this->set('awards', $this->awardService->getAllAwards());
+        $this->set('achievements', $this->awardService->getAllAchievements());
+        $this->set('headerMenu', new Header());
     }
 }

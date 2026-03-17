@@ -1,37 +1,20 @@
 <?php
 
-/**
- * @project:   Community Badges
- *
- * @copyright  (C) 2021 Portland Labs (https://www.portlandlabs.com)
- * @author     Fabian Bitter (fabian@bitter.de)
- */
+declare(strict_types=1);
 
 namespace PortlandLabs\CommunityBadges\Events;
 
-use PortlandLabs\CommunityBadges\User\Point\Entry;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use PortlandLabs\CommunityBadges\Entity\Point\TimelineEntry;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class AfterAssignCommunityPoints extends GenericEvent
+final class AfterAssignCommunityPoints extends Event
 {
-    /** @var Entry */
-    protected $entry;
+    public function __construct(
+        public readonly TimelineEntry $entry
+    ) {}
 
-    /**
-     * @return Entry
-     */
-    public function getEntry(): Entry
+    public function getEntry(): TimelineEntry
     {
         return $this->entry;
-    }
-
-    /**
-     * @param Entry $entry
-     * @return AfterAssignCommunityPoints
-     */
-    public function setEntry(Entry $entry): AfterAssignCommunityPoints
-    {
-        $this->entry = $entry;
-        return $this;
     }
 }

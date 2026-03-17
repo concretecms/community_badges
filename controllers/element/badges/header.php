@@ -13,7 +13,7 @@ use Concrete\Core\Controller\ElementController;
 
 class Header extends ElementController
 {
-    protected $pkgHandle = "community_badges";
+    protected $pkgHandle = 'community_badges';
 
     public function getElement()
     {

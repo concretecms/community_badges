@@ -1,5 +1,5 @@
 {
-  "name": "concretecms/community_badges2",
+  "name": "concretecms2/community_badges",
   "description": "Integrate the community awards feature awards into your site.",
   "type": "concrete5-package",
   "license": "MIT",
@@ -13,13 +13,30 @@
   "require": {
     "php": ">=8.4"
   },
+  "conflict": {
+    "concrete5/core": "<9.4.999"
+  },
   "require-dev": {
     "concrete5/core": "9.5.x-dev",
-    "carthage-software/mago": "^1.13.3"
+    "carthage-software/mago": "^1.13.3",
+    "phpunit/phpunit": "^13.0"
   },
   "config": {
     "allow-plugins": {
       "mlocati/composer-patcher": true
     }
+  },
+  "scripts": {
+    "fix:format": "mago format",
+    "test:format": "@format --check",
+    "test:lint": "mago lint --sort",
+    "test:types": "mago analyse --sort",
+    "test:unit": "phpunit",
+    "test": [
+      "@test:format",
+      "@test:lint",
+      "@test:types",
+      "@test:unit"
+    ]
   }
 }

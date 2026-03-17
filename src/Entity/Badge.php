@@ -14,18 +14,18 @@ use Doctrine\ORM\Mapping as ORM;
 class Badge implements \JsonSerializable
 {
     #[ORM\Id]
-    #[ORM\Column('integer')]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue('AUTO')]
     public int $id;
 
     public function __construct(
-        #[ORM\Column('string')]
+        #[ORM\Column(type: 'string')]
         public string $name,
 
-        #[ORM\Column('string')]
+        #[ORM\Column(type: 'string')]
         public string $handle,
 
-        #[ORM\Column('string')]
+        #[ORM\Column(type: 'string')]
         public string $description,
 
         #[ORM\ManyToOne(targetEntity: File::class)]
@@ -48,11 +48,9 @@ class Badge implements \JsonSerializable
 
         if ($imageApprovedVersion instanceof Version) {
             $imageFileName = $imageApprovedVersion?->getFileName();
+            $contents = (string) $imageApprovedVersion->getFileContents();
             $imageDataBase64 =
-                'data:'
-                . $imageApprovedVersion?->getMimeType()
-                . ';base64,'
-                . base64_encode($imageApprovedVersion->getFileContents());
+                'data:' . (string) $imageApprovedVersion?->getMimeType() . ';base64,' . base64_encode($contents);
         }
 
         return [
@@ -63,5 +61,35 @@ class Badge implements \JsonSerializable
                 'data' => $imageDataBase64,
             ],
         ];
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getHandle(): string
+    {
+        return $this->handle;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getThumbnail(): ?File
+    {
+        return $this->thumbnail;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }

@@ -1,16 +1,13 @@
-<?php /** @noinspection DuplicatedCode */
+<?php
 
-/** @noinspection PhpUnused */
+declare(strict_types=1);
 
-/**
- * @project:   Community Badges
- *
- * @copyright  (C) 2021 Portland Labs (https://www.portlandlabs.com)
- * @author     Fabian Bitter (fabian@bitter.de)
- */
+/** @mago-ignore lint:all */
+/** @mago-ignore analysis:all */
 
 namespace PortlandLabs\CommunityBadges;
 
+use Concrete\Core\Entity\User\User as UserEntity;
 use Concrete\Core\Events\EventDispatcher;
 use Concrete\Core\Mail\Service;
 use Concrete\Core\User\User;
@@ -92,14 +89,13 @@ class AwardService
     /**
      * @return Achievement[]
      */
-    public function getAllAchievements(): iterable
+    public function getAllAchievements(...$args): iterable
     {
-        $args = func_get_args();
         if (count($args) > 0) {
             return $this->achievementRepository->findBy(...$args);
-        } else {
-            return $this->achievementRepository->findBy([], ['name' => 'asc']);
         }
+
+        return $this->achievementRepository->findBy([], ['name' => 'asc']);
     }
 
     public function getAwardList(): array
@@ -156,9 +152,9 @@ class AwardService
 
         if ($entry instanceof Award) {
             return $entry;
-        } else {
-            throw new BadgeNotFound();
         }
+
+        throw new BadgeNotFound();
     }
 
     /**
@@ -174,9 +170,9 @@ class AwardService
 
         if ($entry instanceof Badge) {
             return $entry;
-        } else {
-            throw new BadgeNotFound();
         }
+
+        throw new BadgeNotFound();
     }
 
     /**
@@ -192,9 +188,9 @@ class AwardService
 
         if ($entry instanceof Badge) {
             return $entry;
-        } else {
-            throw new BadgeNotFound();
         }
+
+        throw new BadgeNotFound();
     }
 
     /**
@@ -210,9 +206,9 @@ class AwardService
 
         if ($entry instanceof Badge) {
             return $entry;
-        } else {
-            throw new BadgeNotFound();
         }
+
+        throw new BadgeNotFound();
     }
 
     /**
@@ -229,9 +225,9 @@ class AwardService
 
         if ($entry instanceof AwardGrant) {
             return $entry;
-        } else {
-            throw new GrantBadgeNotFound();
         }
+
+        throw new GrantBadgeNotFound();
     }
 
     /**
@@ -247,24 +243,24 @@ class AwardService
 
         if ($entry instanceof UserBadge) {
             return $entry;
-        } else {
-            throw new AwardedBadgeNotFound();
         }
+
+        throw new AwardedBadgeNotFound();
     }
 
     public function saveBadge($badge): void
     {
-        if ($badge instanceof Award) {
-            $this->saveAward($badge);
-        } else {
-            $this->saveAchievement($badge);
-        }
+        match (true) {
+            $badge instanceof Award => $this->saveAward($badge),
+            $badge instanceof Achievement => $this->saveAchievement($badge),
+            default => throw new InvalidBadgeType(),
+        };
     }
 
     public function saveAward(Award $award): void
     {
         if ($award->getCreatedAt() === null) {
-            $award->setCreatedAt(new DateTime());
+            $award->createdAt = new \DateTimeImmutable();
         }
 
         $this->entityManager->persist($award);
@@ -274,7 +270,7 @@ class AwardService
     public function saveAchievement(Achievement $achievement): void
     {
         if ($achievement->getCreatedAt() === null) {
-            $achievement->setCreatedAt(new DateTime());
+            $achievement->createdAt = new \DateTimeImmutable();
         }
 
         $this->entityManager->persist($achievement);
@@ -308,38 +304,37 @@ class AwardService
     {
         if (!$user instanceof User || !$user->isRegistered()) {
             throw new NoUserSelected();
-        } else {
-            $grantedAward = new AwardGrant();
-
-            $userInfo = $user->getUserInfoObject();
-
-            $grantedAward->setUser($userInfo->getEntityObject());
-            $grantedAward->setAward($award);
-            $grantedAward->setCreatedAt(new DateTime());
-
-            $event = new BeforeGrantAward();
-            $event->setGrantedAward($grantedAward);
-            $this->eventDispatcher->dispatch('on_before_grant_award', $event);
-
-            $this->entityManager->persist($grantedAward);
-            $this->entityManager->flush();
-
-            $this->mailService->addParameter('grantedAward', $grantedAward);
-            $this->mailService->load('award_granted', 'community_badges');
-            $this->mailService->to($userInfo->getUserEmail());
-
-            try {
-                $this->mailService->sendMail();
-            } catch (Exception $e) {
-                throw new MailTransportError();
-            }
-
-            $event = new AfterGrantAward();
-            $event->setGrantedAward($grantedAward);
-            $this->eventDispatcher->dispatch('on_after_grant_award', $event);
-
-            return $grantedAward;
         }
+        $grantedAward = new AwardGrant();
+
+        $userInfo = $user->getUserInfoObject();
+
+        $grantedAward->setUser($userInfo->getEntityObject());
+        $grantedAward->setAward($award);
+        $grantedAward->setCreatedAt(new DateTime());
+
+        $event = new BeforeGrantAward();
+        $event->setGrantedAward($grantedAward);
+        $this->eventDispatcher->dispatch('on_before_grant_award', $event);
+
+        $this->entityManager->persist($grantedAward);
+        $this->entityManager->flush();
+
+        $this->mailService->addParameter('grantedAward', $grantedAward);
+        $this->mailService->load('award_granted', 'community_badges');
+        $this->mailService->to($userInfo->getUserEmail());
+
+        try {
+            $this->mailService->sendMail();
+        } catch (Exception $e) {
+            throw new MailTransportError();
+        }
+
+        $event = new AfterGrantAward();
+        $event->setGrantedAward($grantedAward);
+        $this->eventDispatcher->dispatch('on_after_grant_award', $event);
+
+        return $grantedAward;
     }
 
     /**
@@ -355,11 +350,13 @@ class AwardService
     {
         if ($badge instanceof Achievement) {
             return $this->giveAchievement($badge, $user);
-        } else if ($badge instanceof Award) {
-            return $this->giveAward($badge, $user);
-        } else {
-            throw new InvalidBadgeType();
         }
+
+        if ($badge instanceof Award) {
+            return $this->giveAward($badge, $user);
+        }
+
+        throw new InvalidBadgeType();
     }
 
     /**
@@ -374,57 +371,56 @@ class AwardService
     {
         if (!$user instanceof User || !$user->isRegistered()) {
             throw new NoUserSelected();
-        } else {
-            $userBadge = new UserBadge();
-            $userInfo = $user->getUserInfoObject();
-
-            $queryBuilder = $this->connection->createQueryBuilder();
-
-            try {
-                $countOfBadges = (int) $queryBuilder
-                    ->select('COUNT(*)')
-                    ->from('UserBadge', 'ub')
-                    ->where('ub.uID = :uID')
-                    ->andWhere('ub.badgeId = :badgeId')
-                    ->setParameter(':uID', $userInfo->getUserID())
-                    ->setParameter(':badgeId', $achievement->getId())
-                    ->execute()
-                    ->fetchColumn();
-            } catch (Exception $e) {
-                $countOfBadges = 0;
-            }
-
-            if ($countOfBadges > 0) {
-                throw new AchievementAlreadyExists();
-            }
-
-            $userBadge->setBadge($achievement);
-            $userBadge->setUser($userInfo->getEntityObject());
-            $userBadge->setCreatedAt(new DateTime());
-
-            $event = new BeforeGiveAchievement();
-            $event->setUserBadge($userBadge);
-            $this->eventDispatcher->dispatch('on_before_give_achievement', $event);
-
-            $this->entityManager->persist($userBadge);
-            $this->entityManager->flush();
-
-            $this->mailService->addParameter('userBadge', $userBadge);
-            $this->mailService->load('achievement_given', 'community_badges');
-            $this->mailService->to($userInfo->getUserEmail());
-
-            try {
-                $this->mailService->sendMail();
-            } catch (Exception $e) {
-                throw new MailTransportError();
-            }
-
-            $event = new AfterGiveAchievement();
-            $event->setUserBadge($userBadge);
-            $this->eventDispatcher->dispatch('on_after_give_achievement', $event);
-
-            return $userBadge;
         }
+        $userInfo = $user->getUserInfoObject();
+        assert($userInfo instanceof UserInfo);
+        $queryBuilder = $this->connection->createQueryBuilder();
+
+        try {
+            $countOfBadges = (int) $queryBuilder
+                ->select('COUNT(*)')
+                ->from('UserBadge', 'ub')
+                ->where('ub.uID = :uID')
+                ->andWhere('ub.badgeId = :badgeId')
+                ->setParameter(':uID', $userInfo->getUserID())
+                ->setParameter(':badgeId', $achievement->getId())
+                ->execute()
+                ->fetchColumn();
+        } catch (Exception $e) {
+            $countOfBadges = 0;
+        }
+
+        if ($countOfBadges > 0) {
+            throw new AchievementAlreadyExists();
+        }
+
+        $userBadge = new UserBadge($userInfo->getEntityObject(), null, $achievement);
+        $userBadge->setBadge($achievement);
+        $userBadge->setUser($userInfo->getEntityObject());
+        $userBadge->setCreatedAt(new DateTime());
+
+        $event = new BeforeGiveAchievement();
+        $event->setUserBadge($userBadge);
+        $this->eventDispatcher->dispatch('on_before_give_achievement', $event);
+
+        $this->entityManager->persist($userBadge);
+        $this->entityManager->flush();
+
+        $this->mailService->addParameter('userBadge', $userBadge);
+        $this->mailService->load('achievement_given', 'community_badges');
+        $this->mailService->to($userInfo->getUserEmail());
+
+        try {
+            $this->mailService->sendMail();
+        } catch (Exception $e) {
+            throw new MailTransportError();
+        }
+
+        $event = new AfterGiveAchievement();
+        $event->setUserBadge($userBadge);
+        $this->eventDispatcher->dispatch('on_after_give_achievement', $event);
+
+        return $userBadge;
     }
 
     /**
@@ -494,83 +490,63 @@ class AwardService
     {
         if (!$user->isRegistered()) {
             throw new NoUserSelected();
-        } else {
-            $userBadge = new UserBadge();
-            $userInfo = $user->getUserInfoObject();
-
-            if ($grantedAward->getUser()->getUserID() != $this->user->getUserID()) {
-                throw new NoAuthorization();
-            }
-
-            if ($this->user->getUserID() == $user->getUserID()) {
-                throw new InvalidSelfAssignment();
-            }
-
-            $userBadge->setBadge($grantedAward->getAward());
-            $userBadge->setUser($userInfo->getEntityObject());
-            $userBadge->setAwardGrant($grantedAward);
-            $userBadge->setCreatedAt(new DateTime());
-
-            $event = new BeforeGiveAward();
-            $event->setUserBadge($userBadge);
-            $this->eventDispatcher->dispatch('on_before_give_award', $event);
-
-            $grantedAward->setRedeemedAt(new DateTime());
-
-            $this->entityManager->persist($grantedAward);
-            $this->entityManager->persist($userBadge);
-            $this->entityManager->flush();
-
-            $this->mailService->addParameter('userBadge', $userBadge);
-            $this->mailService->load('award_given', 'community_badges');
-            $this->mailService->to($userInfo->getUserEmail());
-
-            try {
-                $this->mailService->sendMail();
-            } catch (Exception $e) {
-                throw new MailTransportError();
-            }
-
-            $event = new AfterGiveAward();
-            $event->setUserBadge($userBadge);
-            $this->eventDispatcher->dispatch('on_after_give_award', $event);
-
-            return $userBadge;
         }
+
+        $userInfo = $user->getUserInfoObject();
+
+        if (!$userInfo || $grantedAward->user->getUserID() !== $this->user->getUserID()) {
+            throw new NoAuthorization();
+        }
+
+        if ($this->user->getUserID() === $user->getUserID()) {
+            throw new InvalidSelfAssignment();
+        }
+
+        $userBadge = new UserBadge($userInfo->getEntityObject(), $grantedAward, $grantedAward->award);
+        $event = new BeforeGiveAward();
+        $event->setUserBadge($userBadge);
+        $this->eventDispatcher->dispatch('on_before_give_award', $event);
+
+        $grantedAward->redeemedAt = new \DateTimeImmutable();
+
+        $this->entityManager->persist($grantedAward);
+        $this->entityManager->persist($userBadge);
+        $this->entityManager->flush();
+
+        $this->mailService->addParameeter('userBadge', $userBadge);
+        $this->mailService->load('award_given', 'community_badges');
+        $this->mailService->to($userInfo->getUserEmail());
+
+        try {
+            $this->mailService->sendMail();
+        } catch (Exception $e) {
+            throw new MailTransportError();
+        }
+
+        $event = new AfterGiveAward();
+        $event->setUserBadge($userBadge);
+        $this->eventDispatcher->dispatch('on_after_give_award', $event);
+
+        return $userBadge;
     }
 
     /**
      * @return AwardGrant[]
      */
-    public function getAllGrantedAwardsByUser(User|UserInfo|\Concrete\Core\Entity\User\User|null $user = null): iterable
+    public function getAllGrantedAwardsByUser(User|UserInfo|UserEntity|int|null $user = null): iterable
     {
         if ($user === null) {
             // if no user is given use the current user
             $user = $this->user;
         }
 
-        if ((int) $user->getUserID() > 0) {
+        $userId = is_int($user) ? $user : $user->getUserID();
+
+        if ($userId > 0) {
             return $this->grantAwardRepository->findBy([
-                'user' => $user->getUserID(),
+                'user' => $userId,
                 'redeemedAt' => null,
             ]);
-        } else {
-            return [];
-        }
-    }
-
-    /**
-     * @return UserBadge[]
-     */
-    public function getAllUserBadgesByUser(User|UserInfo|\Concrete\Core\Entity\User\User|null $user = null): iterable
-    {
-        if ($user === null) {
-            // if no user is given use the current user
-            $user = $this->user;
-        }
-
-        if ((int) $user->getUserID() > 0) {
-            return $this->userBadgeRepository->findBy(['user' => $user->getUserID()]);
         }
 
         return [];
@@ -579,7 +555,26 @@ class AwardService
     /**
      * @return UserBadge[]
      */
-    public function getAllAchievementsByUser(User|UserInfo|\Concrete\Core\Entity\User\User|null $user = null): iterable
+    public function getAllUserBadgesByUser(User|UserInfo|UserEntity|int|null $user = null): iterable
+    {
+        if ($user === null) {
+            // if no user is given use the current user
+            $user = $this->user;
+        }
+
+        $userId = is_int($user) ? $user : $user->getUserID();
+
+        if ($userId > 0) {
+            return $this->userBadgeRepository->findBy(['user' => $userId]);
+        }
+
+        return [];
+    }
+
+    /**
+     * @return UserBadge[]
+     */
+    public function getAllAchievementsByUser(User|UserInfo|UserEntity|int|null $user = null): iterable
     {
         $userBadges = [];
 
@@ -597,7 +592,7 @@ class AwardService
     /**
      * @return UserBadge[]
      */
-    public function getAllAwardsByUser(User|UserInfo|\Concrete\Core\Entity\User\User|null $user = null): iterable
+    public function getAllAwardsByUser(User|UserInfo|UserEntity|int|null $user = null): iterable
     {
         $userBadges = [];
 
@@ -615,7 +610,7 @@ class AwardService
     /**
      * @return array<array-key, array{userBadge: UserBadge, count: int}>
      */
-    public function getAllAwardsGroupedByUser(User|UserInfo|\Concrete\Core\Entity\User\User|null $user = null): iterable
+    public function getAllAwardsGroupedByUser(User|UserInfo|UserEntity|int|null $user = null): iterable
     {
         /** @var array<array-key, array{userBadge: UserBadge, count: int}> $userBadges */
         $userBadges = [];
@@ -651,7 +646,7 @@ class AwardService
     /**
      * @return array<array-key, array{userBadge: UserBadge, count: int}>
      */
-    public function getAllBadgesGroupedByUser(User|UserInfo|\Concrete\Core\Entity\User\User|null $user = null): iterable
+    public function getAllBadgesGroupedByUser(User|UserInfo|UserEntity|int|null $user = null): iterable
     {
         /** @var array<array-key, array{userBadge: UserBadge, count: int}> $userBadges */
         $userBadges = [];
@@ -683,7 +678,7 @@ class AwardService
     /**
      * @return array<array-key, array{grantedAward: AwardGrant, count: int}>
      */
-    public function getAllGrantedAwardsGroupedByUser(User|UserInfo|\Concrete\Core\Entity\User\User|null $user = null): iterable
+    public function getAllGrantedAwardsGroupedByUser(User|UserInfo|UserEntity|int|null $user = null): iterable
     {
         /** @var array<array-key, array{grantedAward: AwardGrant, count: int}> $userGrantAwards */
         $userGrantAwards = [];

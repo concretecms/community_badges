@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PortlandLabs\CommunityBadges\Package\ItemCategory;
 
 use Concrete\Core\Package\ItemCategory\Manager as CoreManager;

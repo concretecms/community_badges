@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @project:   Community Badges
  *
@@ -20,14 +22,16 @@ class AccountAgeSaver extends AbstractSaver
         $this->formValidator->setData($request->request->all());
         $this->formValidator->addRequired('accountAge', t('Please enter the account age.'));
         $this->formValidator->test();
+
+        /** @var ErrorList */
         return $this->formValidator->getError();
     }
 
     public function saveConfiguration(Request $request, AutomationRule $automationRule): void
     {
-        $automationRule->setConfiguration([
+        $automationRule->configuration = [
             'accountAge' => $request->request->getInt('accountAge'),
-        ]);
+        ];
 
         $this->entityManager->persist($automationRule);
         $this->entityManager->flush();

@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class UserBadge
 {
     #[ORM\Id]
-    #[ORM\Column('integer')]
+    #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue('AUTO')]
     public int $id;
 

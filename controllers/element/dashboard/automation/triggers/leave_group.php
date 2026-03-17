@@ -27,9 +27,9 @@ class LeaveGroup extends AutomationRuleElementController
 
     public function view()
     {
-        $configuration = $this->getAutomationRule()->getConfiguration();
-        if (is_array($configuration) && isset($configuration["groupId"])) {
-            $this->set("groupId", $configuration["groupId"]);
+        $configuration = $this->getAutomationRule()?->getConfiguration();
+        if (is_array($configuration) && isset($configuration['groupId'])) {
+            $this->set('groupId', $configuration['groupId']);
         }
     }
 }

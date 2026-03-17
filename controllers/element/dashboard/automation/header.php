@@ -28,8 +28,8 @@ class Header extends ElementController
         return 'dashboard/automation/header';
     }
 
-    public function view() {
-
+    public function view()
+    {
         $driverList = [];
 
         $app = Application::getFacadeApplication();

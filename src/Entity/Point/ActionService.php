@@ -9,8 +9,9 @@ use PortlandLabs\CommunityBadges\User\Point\Action\ActionControllerInterface;
 use PortlandLabs\CommunityBadges\User\Point\Action\ActionDescriptionInterface;
 use PortlandLabs\CommunityBadges\User\Point\Action\DefaultActionController;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
-final class ActionService
+final class ActionService implements ActionServiceInterface
 {
     /**
      * @var array<class-string<ActionControllerInterface>, \WeakReference<ActionControllerInterface>>
@@ -36,35 +37,35 @@ final class ActionService
         return $repository;
     }
 
-    public function add(Action $action): void
+    public function add(Action|TimelineEntry $entity): void
     {
-        $this->em->persist($action);
+        $this->em->persist($entity);
         $this->em->flush();
     }
 
     public function save(Action $action): void
     {
+        /** @mago-ignore analysis:missing-magic-method */
         $this->em->refresh($action);
         $this->em->flush();
-    }
-
-    public function addEntry(TimelineEntry $entry): void
-    {
-        $this->em->persist($entry);
-        $this->em->flush();
-        $this->em->detach($entry);
     }
 
     public function getController(Action $action): ActionControllerInterface
     {
         $controllerClass = $action->customControllerClass ?? DefaultActionController::class;
-        $existingController = $this->controllers[$controllerClass]?->get();
+        $reference = $this->controllers[$controllerClass] ?? null;
+        $existingController = $reference?->get();
         if ($existingController) {
             return $existingController;
         }
 
-        /** @var ActionControllerInterface $controller */
-        $controller = $this->app->get($controllerClass);
+        try {
+            /** @var ActionControllerInterface $controller */
+            $controller = $this->app->get($controllerClass);
+        } catch (NotFoundExceptionInterface) {
+            $controller = $this->app->get(DefaultActionController::class);
+        }
+
         $this->controllers[$controllerClass] = \WeakReference::create($controller);
         return $controller;
     }

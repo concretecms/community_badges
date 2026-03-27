@@ -10,6 +10,12 @@
       "PortlandLabs\\CommunityBadges\\": "src"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "PortlandLabs\\CommunityBadges\\Test\\": "tests",
+      "PortlandLabs\\CommunityBadges\\Test\\Src\\": "tests/src"
+    }
+  },
   "require": {
     "php": ">=8.4"
   },

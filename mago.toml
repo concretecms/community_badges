@@ -4,7 +4,7 @@ php-version = "8.4.0"
 
 [source]
 workspace = "."
-paths = ["src", "controllers"]
+paths = ["src", "controllers", "tests"]
 includes = ["vendor"]
 excludes = []
 
@@ -25,6 +25,7 @@ halstead = { effort-threshold = 7000 }
 [analyzer]
 baseline = ".mago-baseline-analyzer.toml"
 plugins = ['psr-container']
+excludes = ["tests"]
 find-unused-definitions = true
 find-unused-expressions = false
 analyze-dead-code = false

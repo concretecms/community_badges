@@ -14,17 +14,18 @@ use Concrete\Core\Page\Page;
 use Concrete\Core\Search\Pagination\PaginationFactory;
 use Doctrine\ORM\EntityManager;
 use PortlandLabs\CommunityBadges\Entity\Point\ActionService;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionServiceInterface;
 use PortlandLabs\CommunityBadges\Entity\Point\TimelineEntry;
 use PortlandLabs\CommunityBadges\User\Point\Action\ActionDescriptionInterface;
 use PortlandLabs\CommunityBadges\User\Point\EntryList as UserPointEntryList;
 
-class Points extends DashboardPageController
+final class Points extends DashboardPageController
 {
     public $helpers = ['form', 'concrete/ui', 'concrete/urls', 'image', 'concrete/asset_library', 'form/user_selector'];
 
     public function __construct(
         Page $c,
-        protected ActionService $actionService,
+        private ActionServiceInterface $actionService,
     ) {
         parent::__construct($c);
     }

@@ -7,6 +7,7 @@ namespace Concrete\Package\CommunityBadges\Controller\Element\Dashboard\Automati
 use PortlandLabs\CommunityBadges\Automation\Triggers\AutomationRuleElementController;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;
 use PortlandLabs\CommunityBadges\Entity\Point\ActionService;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionServiceInterface;
 use PortlandLabs\CommunityBadges\User\Point\Action\Action;
 
 class ActionCount extends AutomationRuleElementController
@@ -17,7 +18,7 @@ class ActionCount extends AutomationRuleElementController
 
     public function __construct(
         Manager $manager,
-        private ActionService $actionService,
+        private ActionServiceInterface $actionService,
     ) {
         parent::__construct();
         $this->manager = $manager;

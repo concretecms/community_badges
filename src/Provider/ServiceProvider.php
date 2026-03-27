@@ -22,6 +22,8 @@ use Concrete\Core\User\Search\Field\Manager as UserManager;
 use PortlandLabs\CommunityBadges\API\V1\CommunityBadges;
 use PortlandLabs\CommunityBadges\API\V1\Middleware\FractalNegotiatorMiddleware;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Driver\Manager;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionService;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionServiceInterface;
 use PortlandLabs\CommunityBadges\User\Search\Field\Field\AchievementField;
 
 class ServiceProvider extends Provider
@@ -31,6 +33,7 @@ class ServiceProvider extends Provider
         $this->registerAPI();
         $this->registerAutomationManager();
         $this->registerSearchFields();
+        $this->registerEntities();
 
         $this->app->bind(
             \Concrete\Core\Package\ItemCategory\Manager::class,
@@ -95,5 +98,10 @@ class ServiceProvider extends Provider
                 });
             return $router;
         });
+    }
+
+    protected function registerEntities(): void
+    {
+        $this->app->bind(ActionServiceInterface::class, ActionService::class);
     }
 }

@@ -11,6 +11,7 @@ use PortlandLabs\CommunityBadges\Automation\Triggers\Saver\ActionCountSaver;
 use PortlandLabs\CommunityBadges\Automation\Triggers\Saver\SaverInterface;
 use PortlandLabs\CommunityBadges\AwardService;
 use PortlandLabs\CommunityBadges\Entity\Point\ActionService;
+use PortlandLabs\CommunityBadges\Entity\Point\ActionServiceInterface;
 use PortlandLabs\CommunityBadges\Exceptions\AchievementAlreadyExists;
 use PortlandLabs\CommunityBadges\User\Point\Action\Action;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +21,7 @@ final class ActionCountDriver extends AbstractDriver
 {
     public function __construct(
         private AwardService $awardService,
-        private ActionService $actionService,
+        private ActionServiceInterface $actionService,
         private Connection $db,
     ) {}
 
@@ -31,8 +32,7 @@ final class ActionCountDriver extends AbstractDriver
 
     public function getSaver(): SaverInterface
     {
-        /** @var ActionCountSaver */
-        return $this->app->make(ActionCountSaver::class);
+        return $this->app->get(ActionCountSaver::class);
     }
 
     public function getName(): string
@@ -74,12 +74,10 @@ final class ActionCountDriver extends AbstractDriver
 
     private function userNeedsBadge(int $userId, int $action, int $minCount): bool
     {
-        $userBadges = $this->awardService->getAllAwardsByUser($userId);
-
-
         // We do it this way because it allows the query to return quickly when there are a ton of rows
+        $limit = $minCount + 1;
         $statement = $this->db->executeQuery('select 1 from UserPointHistory where upuID = ? and upaID = ? limit '
-        . ($minCount + 1), [$userId, $action]);
+        . $limit, [$userId, $action]);
         $count = 0;
         foreach ($statement->iterateColumn() as $_) {
             $count++;

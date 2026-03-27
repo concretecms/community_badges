@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace PortlandLabs\CommunityBadges\Entity\Point;
 
 use Concrete\Core\Entity\User\User;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @final
  */
-#[ORM\Entity(repositoryClass: ActionRepository::class)]
+#[ORM\Entity(repositoryClass: TimelineEntryRepository::class)]
 #[ORM\Table(name: 'UserPointHistory', indexes: [
     new ORM\Index(columns: ['upuID'], name: 'upuID'),
     new ORM\Index(columns: ['upaID'], name: 'upaID'),
@@ -40,6 +41,7 @@ class TimelineEntry
 
         #[ORM\Column(name: 'timestamp', type: 'datetime_immutable')]
         public \DateTimeImmutable $date {
+            get => $this->date;
             set(\DateTimeImmutable $value) => $this->date = $value->setTimezone(new \DateTimeZone('UTC'));
         },
     ) {}

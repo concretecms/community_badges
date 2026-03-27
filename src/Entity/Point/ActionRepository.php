@@ -33,12 +33,12 @@ class ActionRepository extends EntityRepository
         $pkgId = is_int($package) ? $package : null;
 
         if ($package instanceof Package) {
-            $package = $this
+            $pkgId = $this
                 ->getEntityManager()
                 ->getRepository(PackageEntity::class)
                 ->findOneBy([
                     'handle' => $package->getPackageHandle(),
-                ]);
+                ])?->getPackageID();
         }
 
         if ($package instanceof PackageEntity) {
@@ -47,7 +47,7 @@ class ActionRepository extends EntityRepository
 
         if ($pkgId === null) {
             throw new \InvalidArgumentException(
-                'Package must be an instance of PackageEntity, Package, or an integer package ID.',
+                'Package must be an instance of PackageEntity, Package, or an integer package ID for an installed package.',
             );
         }
 

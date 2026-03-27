@@ -579,7 +579,7 @@ class AwardService
         $userBadges = [];
 
         foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
-            if (!$userBadge->getBadge() instanceof Achievement) {
+            if (!$userBadge->badge() instanceof Achievement) {
                 continue;
             }
 
@@ -597,7 +597,7 @@ class AwardService
         $userBadges = [];
 
         foreach ($this->getAllUserBadgesByUser($user) as $userBadge) {
-            if (!$userBadge->getBadge() instanceof Award) {
+            if (!$userBadge->badge instanceof Award) {
                 continue;
             }
 

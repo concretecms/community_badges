@@ -19,6 +19,7 @@ interface ActionControllerInterface
      * @return ?TDescription
      */
     public function getActionDescriptionObject(TimelineEntry $entry): ?ActionDescriptionInterface;
+
     public function getActionDescription(TimelineEntry $entry): string;
 
     /**

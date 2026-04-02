@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use PortlandLabs\CommunityBadges\User\Point\Action\ActionControllerInterface;
 use PortlandLabs\CommunityBadges\User\Point\Action\ActionDescriptionInterface;
 use PortlandLabs\CommunityBadges\User\Point\Action\DefaultActionController;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -18,6 +19,18 @@ final class ActionService implements ActionServiceInterface
      */
     private array $controllers = [];
 
+    public TimelineEntryRepository $timelineRepository {
+        /** @mago-ignore analysis:invalid-return-statement */
+        /** @mago-ignore analysis:property-type-coercion */
+        get => $this->timelineRepository ??= $this->em->getRepository(TimelineEntry::class);
+    }
+
+    public ActionRepository $actionRepository {
+        /** @mago-ignore analysis:invalid-return-statement */
+        /** @mago-ignore analysis:property-type-coercion */
+        get => $this->actionRepository ??= $this->em->getRepository(Action::class);
+    }
+
     public function __construct(
         public readonly ContainerInterface $app,
         public readonly EntityManagerInterface $em,
@@ -25,16 +38,12 @@ final class ActionService implements ActionServiceInterface
 
     public function getRepository(): ActionRepository
     {
-        $repository = $this->em->getRepository(Action::class);
-        assert($repository instanceof ActionRepository);
-        return $repository;
+        return $this->actionRepository;
     }
 
     public function getEntryRepository(): TimelineEntryRepository
     {
-        $repository = $this->em->getRepository(TimelineEntry::class);
-        assert($repository instanceof TimelineEntryRepository);
-        return $repository;
+        return $this->timelineRepository;
     }
 
     public function add(Action|TimelineEntry $entity): void
@@ -62,8 +71,8 @@ final class ActionService implements ActionServiceInterface
         try {
             /** @var ActionControllerInterface $controller */
             $controller = $this->app->get($controllerClass);
-        } catch (NotFoundExceptionInterface) {
-            $controller = $this->app->get(DefaultActionController::class);
+        } catch (ContainerExceptionInterface) {
+            $controller = new DefaultActionController();
         }
 
         $this->controllers[$controllerClass] = \WeakReference::create($controller);

@@ -33,10 +33,10 @@ class Badge implements \JsonSerializable
         public ?File $thumbnail,
 
         #[ORM\Column(type: 'datetime_immutable')]
-        public \DateTimeImmutable $createdAt = new \DateTimeImmutable('now') {
-            set(\DateTimeImmutable $date) => $this->createdAt = $date->setTimezone(new \DateTimeZone('UTC'));
-        },
-    ) {}
+        public \DateTimeImmutable $createdAt = new \DateTimeImmutable('now'),
+    ) {
+        $this->createdAt = $this->createdAt->setTimezone(new \DateTimeZone('UTC'));
+    }
 
     public function jsonSerialize(): array
     {

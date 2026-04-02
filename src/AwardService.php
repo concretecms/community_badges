@@ -248,7 +248,7 @@ class AwardService
         throw new AwardedBadgeNotFound();
     }
 
-    public function saveBadge($badge): void
+    public function saveBadge(Badge $badge): void
     {
         match (true) {
             $badge instanceof Award => $this->saveAward($badge),
@@ -395,10 +395,6 @@ class AwardService
         }
 
         $userBadge = new UserBadge($userInfo->getEntityObject(), null, $achievement);
-        $userBadge->setBadge($achievement);
-        $userBadge->setUser($userInfo->getEntityObject());
-        $userBadge->setCreatedAt(new DateTime());
-
         $event = new BeforeGiveAchievement();
         $event->setUserBadge($userBadge);
         $this->eventDispatcher->dispatch('on_before_give_achievement', $event);

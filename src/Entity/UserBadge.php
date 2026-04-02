@@ -41,4 +41,29 @@ class UserBadge
     {
         return !$this->awardGrant instanceof AwardGrant;
     }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getAwardGrant(): ?AwardGrant
+    {
+        return $this->awardGrant;
+    }
+
+    public function getBadge(): Badge
+    {
+        return $this->badge;
+    }
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
 }

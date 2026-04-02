@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace PortlandLabs\CommunityBadges\Entity\Point;
 
 use Doctrine\ORM\Mapping as ORM;
-use PortlandLabs\CommunityBadges\User\Point\Action\ActionControllerInterface;
+use Illuminate\Support\Str;
+use PortlandLabs\BackboneQueue\Activity\ActivityType;use PortlandLabs\CommunityBadges\User\Point\Action\ActionControllerInterface;
+use PortlandLabs\MwrCommunity\Profile\Experience\ActionController;
 
 /**
  * @final
